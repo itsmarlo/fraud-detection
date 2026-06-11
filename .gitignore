@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.DS_Store
+storage/uploads/*
+!storage/uploads/.gitkeep
+app/ml/model.pkl
+.env
+certs/*.crt
+certs/*.cer
+certs/*.pem

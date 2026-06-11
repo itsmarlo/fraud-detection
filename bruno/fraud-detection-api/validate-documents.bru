@@ -1,0 +1,23 @@
+meta {
+  name: Validate Documents
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/documents/validate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "claim_id": "CLM-10001",
+    "accident_date": "2026-05-10",
+    "claim_amount": 8200,
+    "vehicle_value": 15000,
+    "invoice_date": "2026-05-09",
+    "repair_invoice_amount": 9000,
+    "available_document_types": ["CLAIM_FORM", "DAMAGE_PHOTO"]
+  }
+}

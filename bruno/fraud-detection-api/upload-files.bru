@@ -1,0 +1,16 @@
+meta {
+  name: Upload Files
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/claims/CLM-10001/files/upload
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  document_type: DAMAGE_PHOTO
+  files: @file(/absolute/path/to/damage.jpg)
+}

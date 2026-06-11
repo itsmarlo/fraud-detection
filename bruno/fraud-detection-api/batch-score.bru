@@ -1,0 +1,53 @@
+meta {
+  name: Batch Score
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/claims/batch-score
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "claims": [
+      {
+        "claim_id": "CLM-LOW-1",
+        "policy_id": "POL-1",
+        "policyholder_id": "CUST-1",
+        "claim_amount": 1200,
+        "vehicle_value": 22000,
+        "repair_estimate_amount": 1000,
+        "accident_date": "2026-05-01",
+        "claim_report_date": "2026-05-02",
+        "policy_start_date": "2025-01-01",
+        "policy_end_date": "2027-01-01",
+        "coverage_type": "COMPREHENSIVE",
+        "driver_age": 42,
+        "vehicle_age_years": 4,
+        "vehicle_mileage": 42000,
+        "number_of_previous_claims": 0,
+        "number_of_previous_rejected_claims": 0,
+        "premium_payment_status": "PAID",
+        "recent_policy_change": false,
+        "accident_location": "Munich",
+        "accident_time_hour": 14,
+        "damage_description": "Minor scratch to the right rear passenger door.",
+        "garage_id": "GAR-001",
+        "garage_previous_suspicious_claims": 0,
+        "has_police_report": false,
+        "has_damage_photos": true,
+        "has_repair_invoice": true,
+        "has_witness_statement": false,
+        "invoice_date": "2026-05-03",
+        "photo_capture_date": "2026-05-01",
+        "bank_account_hash": null,
+        "phone_hash": null,
+        "email_hash": null,
+        "third_party_involved": false
+      }
+    ]
+  }
+}

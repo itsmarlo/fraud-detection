@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection-claims-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fraud-detection-claims-api
+  template:
+    metadata:
+      labels:
+        app: fraud-detection-claims-api
+    spec:
+      containers:
+        - name: api
+          image: <your-registry>/fraud-detection-claims-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_ENV
+              value: kyma
+            - name: STORAGE_BACKEND
+              value: local
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

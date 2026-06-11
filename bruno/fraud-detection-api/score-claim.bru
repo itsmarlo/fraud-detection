@@ -1,0 +1,49 @@
+meta {
+  name: Score Claim
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/claims/score
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "claim_id": "CLM-10001",
+    "policy_id": "POL-20001",
+    "policyholder_id": "CUST-30001",
+    "claim_amount": 8200,
+    "vehicle_value": 15000,
+    "repair_estimate_amount": 7800,
+    "accident_date": "2026-05-10",
+    "claim_report_date": "2026-05-20",
+    "policy_start_date": "2026-05-01",
+    "policy_end_date": "2027-04-30",
+    "coverage_type": "COMPREHENSIVE",
+    "driver_age": 27,
+    "vehicle_age_years": 6,
+    "vehicle_mileage": 92000,
+    "number_of_previous_claims": 4,
+    "number_of_previous_rejected_claims": 1,
+    "premium_payment_status": "OVERDUE",
+    "recent_policy_change": true,
+    "accident_location": "Berlin",
+    "accident_time_hour": 2,
+    "damage_description": "Front bumper and left headlamp damaged after collision.",
+    "garage_id": "GAR-009",
+    "garage_previous_suspicious_claims": 6,
+    "has_police_report": false,
+    "has_damage_photos": true,
+    "has_repair_invoice": true,
+    "has_witness_statement": false,
+    "invoice_date": "2026-05-11",
+    "photo_capture_date": "2026-05-10",
+    "bank_account_hash": "bank-a",
+    "phone_hash": "phone-a",
+    "email_hash": "email-a",
+    "third_party_involved": true
+  }
+}

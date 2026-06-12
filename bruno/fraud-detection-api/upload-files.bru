@@ -5,12 +5,19 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/api/v1/claims/CLM-10001/files/upload
+  url: {{BASE_URL}}/api/v1/claims/{{CLAIM_ID}}/files/upload
   body: multipartForm
   auth: none
 }
 
 body:multipart-form {
-  document_type: DAMAGE_PHOTO
-  files: @file(/absolute/path/to/damage.jpg)
+  document_type: {{DOCUMENT_TYPE}}
+  files: @file({{DAMAGE_PHOTO_PATH}})
+}
+
+script:post-response {
+  const files = res.getBody();
+  if (res.getStatus() === 201 && Array.isArray(files) && files.length > 0) {
+    bru.setEnvVar("FILE_ID", files[0].file_id, { persist: true });
+  }
 }

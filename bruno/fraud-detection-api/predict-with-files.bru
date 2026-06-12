@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/api/v1/claims/CLM-10001/predict-with-files
+  url: {{BASE_URL}}/api/v1/claims/{{CLAIM_ID}}/predict-with-files
   body: json
   auth: none
 }
 
 body:json {
   {
-    "claim_id": "CLM-10001",
+    "claim_id": "{{CLAIM_ID}}",
     "policy_id": "POL-20001",
     "policyholder_id": "CUST-30001",
     "claim_amount": 8200,

@@ -6,6 +6,18 @@
       "bank_account_hash": "string",
       "phone_hash": "string",
       "email_hash": "string"
+    },
+    {
+      "claim_id": "CLM-10001",
+      "bank_account_hash": "bank-a",
+      "phone_hash": "phone-a",
+      "email_hash": "email-a"
+    },
+    {
+      "claim_id": "CLM-LOW-1",
+      "bank_account_hash": null,
+      "phone_hash": null,
+      "email_hash": null
     }
   ]
 }

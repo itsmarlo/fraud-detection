@@ -245,7 +245,18 @@ dedicated vision model.
 
 ## Bruno
 
-Open `bruno/fraud-detection-api` in Bruno and select the `local` environment. The collection covers health, structured and batch scores, upload/list/analyze, multimodal prediction, document validation, model training, and model information. Update the upload request's local file path before sending it.
+Open `bruno/fraud-detection-api` in Bruno and select:
+
+- `local` for a direct Uvicorn server at `http://localhost:8000`
+- `btp` for the deployed Cloud Foundry route
+
+Set `DAMAGE_PHOTO_PATH` in the selected environment before uploading. The
+upload request saves its returned `FILE_ID`, which is then used automatically
+by `Analyze File`. The collection covers health, structured and batch scores,
+upload/list/analyze, multimodal prediction, document validation, model
+training, and model information. See
+`bruno/fraud-detection-api/README.md` for the request order and environment
+setup.
 
 ## SAP BTP Cloud Foundry
 

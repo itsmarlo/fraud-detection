@@ -45,7 +45,9 @@ def encoding(**overrides) -> MultimodalEncoding:
 def test_encoder_is_disabled_by_default(tmp_path):
     image_path = tmp_path / "damage.jpg"
     image_path.write_bytes(b"image")
-    service = MultimodalEncoderService(settings=Settings(enable_llm_encoder=False))
+    service = MultimodalEncoderService(
+        settings=Settings(enable_llm_encoder=False, llm_provider="openai")
+    )
 
     result = service.analyze(
         image_path,
@@ -61,7 +63,11 @@ def test_encoder_sends_image_and_returns_structured_result(tmp_path):
     image_path.write_bytes(b"image")
     client = FakeClient(encoding())
     service = MultimodalEncoderService(
-        settings=Settings(enable_llm_encoder=True, openai_api_key="test"),
+        settings=Settings(
+            enable_llm_encoder=True,
+            llm_provider="openai",
+            openai_api_key="test",
+        ),
         client=client,
     )
 
@@ -83,7 +89,11 @@ def test_encoder_sends_document_as_file_input(tmp_path):
     document_path.write_bytes(b"%PDF-test")
     client = FakeClient(encoding(detected_document_type="REPAIR_INVOICE"))
     service = MultimodalEncoderService(
-        settings=Settings(enable_llm_encoder=True, openai_api_key="test"),
+        settings=Settings(
+            enable_llm_encoder=True,
+            llm_provider="openai",
+            openai_api_key="test",
+        ),
         client=client,
     )
 
@@ -109,7 +119,11 @@ def test_encoder_converts_material_inconsistency_to_finding(tmp_path):
         )
     )
     service = MultimodalEncoderService(
-        settings=Settings(enable_llm_encoder=True, openai_api_key="test"),
+        settings=Settings(
+            enable_llm_encoder=True,
+            llm_provider="openai",
+            openai_api_key="test",
+        ),
         client=client,
     )
 
@@ -127,7 +141,11 @@ def test_encoder_failure_returns_fallback_status(tmp_path):
     document_path = tmp_path / "invoice.pdf"
     document_path.write_bytes(b"%PDF-test")
     service = MultimodalEncoderService(
-        settings=Settings(enable_llm_encoder=True, openai_api_key="test"),
+        settings=Settings(
+            enable_llm_encoder=True,
+            llm_provider="openai",
+            openai_api_key="test",
+        ),
         client=FailingClient(),
     )
 

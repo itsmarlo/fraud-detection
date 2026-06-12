@@ -8,6 +8,7 @@ from app.main import app
 from app.services.file_metadata_service import file_metadata_service
 from app.services.file_storage_service import file_storage_service
 from app.services.model_service import model_service
+from app.services.multimodal_encoder_service import multimodal_encoder_service
 
 
 @pytest.fixture(autouse=True)
@@ -22,7 +23,10 @@ def isolated_storage(tmp_path):
     file_metadata_service.metadata_file = metadata_file
     file_storage_service.upload_dir = upload_dir
     model_service.model_path = tmp_path / "model.pkl"
+    original_encoder_enabled = multimodal_encoder_service.settings.enable_llm_encoder
+    multimodal_encoder_service.settings.enable_llm_encoder = False
     yield
+    multimodal_encoder_service.settings.enable_llm_encoder = original_encoder_enabled
 
 
 @pytest.fixture

@@ -1,4 +1,11 @@
 {
   "files": [],
-  "claim_identities": []
+  "claim_identities": [
+    {
+      "claim_id": "string",
+      "bank_account_hash": "string",
+      "phone_hash": "string",
+      "email_hash": "string"
+    }
+  ]
 }

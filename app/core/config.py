@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,9 +28,18 @@ class Settings(BaseSettings):
     rule_score_weight: float = Field(default=0.6, ge=0)
     ml_score_weight: float = Field(default=0.4, ge=0)
     enable_llm_encoder: bool = False
+    llm_provider: str = "openai"
     openai_api_key: SecretStr | None = None
     llm_model: str = "gpt-5.5"
     llm_timeout_seconds: float = Field(default=60, gt=0)
+    aicore_base_url: str | None = None
+    aicore_token_url: str | None = None
+    aicore_client_id: str | None = None
+    aicore_client_secret: SecretStr | None = None
+    aicore_resource_group: str = "default"
+    orch_deployment_url: str | None = None
+    aicore_llm_model: str = "gpt-4o"
+    masking_required: bool = True
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -39,6 +48,14 @@ class Settings(BaseSettings):
         if self.rule_score_weight + self.ml_score_weight <= 0:
             raise ValueError("At least one score weight must be greater than zero")
         return self
+
+    @field_validator("llm_provider")
+    @classmethod
+    def validate_llm_provider(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if normalized not in {"openai", "btp"}:
+            raise ValueError("LLM_PROVIDER must be 'openai' or 'btp'")
+        return normalized
 
     @property
     def image_mime_types(self) -> set[str]:

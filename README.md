@@ -51,11 +51,12 @@ The app works without `app/ml/model.pkl`. When a trained model exists, the final
 
 ## Multimodal LLM Encoder
 
-The optional LLM encoder sends uploaded images and documents to an OpenAI
-vision-capable model through the Responses API. Structured Outputs constrain
-the response to extracted dates, amounts, document numbers, visual
-observations, damage severity, description consistency, suspicious indicators,
-and an evidence risk score.
+The optional LLM encoder supports SAP AI Core Orchestration on BTP as the
+recommended enterprise provider, with OpenAI as an alternative. It sends
+uploaded images and documents to a vision-capable model and validates the
+response against a structured schema containing dates, amounts, document
+numbers, visual observations, damage severity, description consistency,
+suspicious indicators, and an evidence risk score.
 
 The encoder does not make the final fraud decision. Its evidence score receives
 a bounded `25%` weight inside the relevant image or document component, while
@@ -71,15 +72,36 @@ pip install -r requirements.txt
 
 ```dotenv
 ENABLE_LLM_ENCODER=true
+LLM_PROVIDER=btp
+AICORE_RESOURCE_GROUP=grounding-test
+ORCH_DEPLOYMENT_URL=https://api.ai.../v2/inference/deployments/your-deployment
+AICORE_LLM_MODEL=gpt-4o
+MASKING_REQUIRED=true
+```
+
+For local development, provide AI Core credentials through
+`AICORE_SERVICE_KEY`, or set `AICORE_TOKEN_URL`, `AICORE_CLIENT_ID`, and
+`AICORE_CLIENT_SECRET`. On Cloud Foundry, bind the AI Core service instance;
+the application discovers credentials from `VCAP_SERVICES`.
+
+SAP Data Privacy Integration pseudonymization is enabled when
+`MASKING_REQUIRED=true`, including file-input anonymization. The selected AI
+Core model must support image inputs. The embedding deployment is not used by
+this semantic extraction pipeline; it can be added later for similarity search
+or retrieval.
+
+To use OpenAI instead:
+
+```dotenv
+LLM_PROVIDER=openai
 OPENAI_API_KEY=your-api-key
 LLM_MODEL=gpt-5.5
 ```
 
-When disabled, missing a key, or unavailable, the application continues with
-local deterministic extraction. Enabling the encoder sends claim evidence and
-selected claim context to the configured API provider. Confirm data-processing,
-retention, regional, consent, and insurance-governance requirements before
-using real customer files.
+When disabled, missing credentials, or unavailable, the application continues
+with local deterministic extraction. Confirm data-processing, retention,
+regional, consent, and insurance-governance requirements before using real
+customer files.
 
 ## Docker
 
@@ -230,9 +252,17 @@ Open `bruno/fraud-detection-api` in Bruno and select the `local` environment. Th
 ```bash
 cf login
 cf push
+cf bind-service fraud-detection-claims-api YOUR-AICORE-SERVICE-INSTANCE
+cf set-env fraud-detection-claims-api ORCH_DEPLOYMENT_URL "YOUR-ORCHESTRATION-DEPLOYMENT-URL"
+cf restage fraud-detection-claims-api
 ```
 
-`manifest.yml` configures the Python buildpack, `${PORT}`, and `/health`. Cloud Foundry local disk is ephemeral and must not hold production claim evidence. Replace the local storage adapter with SAP Object Store or SAP Document Management Service and persist metadata in SAP HANA Cloud. Bind service credentials through BTP service bindings or user-provided services, never source control.
+`manifest.yml` configures the Python buildpack, `${PORT}`, `/health`, and the
+BTP encoder provider. Cloud Foundry local disk is ephemeral and must not hold
+production claim evidence. Replace the local storage adapter with SAP Object
+Store or SAP Document Management Service and persist metadata in SAP HANA
+Cloud. Bind service credentials through BTP service bindings, never source
+control.
 
 For enterprise connectivity, use SAP BTP Destination service and SAP Cloud Connector to reach private SAP S/4HANA claims data, SAP FS-CD, or SAP ICM. SAP Integration Suite can orchestrate claim events and map enterprise payloads to this API.
 
@@ -261,4 +291,6 @@ Expose the service with the Kyma API Gateway or an ingress resource appropriate 
 - Add malware scanning, encryption, retention policies, audit logging, observability, and human-review feedback loops.
 - For multi-instance deployment, use SAP HANA Cloud for metadata and network features, object storage for binaries, and a queue or workflow for heavier extraction.
 
-Future enhancements include SAP AI Core model serving, graph analytics for shared identities and garages, drift monitoring, OCR adapters, real damage segmentation, and Fiori or SAP Build Apps review screens.
+Future enhancements include graph analytics for shared identities and garages,
+embedding-based evidence similarity, drift monitoring, OCR adapters, real
+damage segmentation, and Fiori or SAP Build Apps review screens.

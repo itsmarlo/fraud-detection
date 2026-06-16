@@ -12,10 +12,10 @@ applications:
     env:
       APP_ENV: cloud-foundry
       STORAGE_BACKEND: local
-      ENABLE_OCR: false
-      ENABLE_IMAGE_AI: false
-      ENABLE_LLM_ENCODER: true
+      ENABLE_OCR: "false"
+      ENABLE_IMAGE_AI: "false"
+      ENABLE_LLM_ENCODER: "true"
       LLM_PROVIDER: btp
       AICORE_RESOURCE_GROUP: grounding-test
-      AICORE_LLM_MODEL: gpt-4o
-      MASKING_REQUIRED: true
+      AICORE_LLM_MODEL: claude-sonnet-4
+      MASKING_REQUIRED: "true"

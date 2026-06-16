@@ -35,94 +35,15 @@
       }
     },
     {
-      "file_id": "FILE-BB92ADAB11A3",
-      "claim_id": "CLM-DEMO-10001",
-      "document_type": "DAMAGE_PHOTO",
-      "original_filename": "car-damage.webp",
-      "stored_filename": "468f5be6cf59430e9956442ebdadb0c1.webp",
-      "content_type": "image/webp",
-      "file_size": 74348,
-      "checksum": "8c0c63f4fde9785b99aba6a6e4cda30e8631f5f8e167e8733f1dd9131142c127",
-      "upload_timestamp": "2026-06-16T07:14:04.058658Z",
-      "analysis_status": "COMPLETED",
-      "analysis_result": {
-        "width": 600,
-        "height": 400,
-        "format": "WEBP",
-        "exif_timestamp": null,
-        "checksum": "8c0c63f4fde9785b99aba6a6e4cda30e8631f5f8e167e8733f1dd9131142c127",
-        "metadata_extracted": true,
-        "findings": [
-          {
-            "code": "LOW_RESOLUTION_IMAGE",
-            "message": "Image resolution is too low for reliable damage review.",
-            "severity": "MEDIUM"
-          }
-        ],
-        "damage_severity": {
-          "status": "UNKNOWN",
-          "reason": "Image AI is disabled; no damage severity model is configured."
-        },
-        "description_consistency": {
-          "status": "UNKNOWN",
-          "reason": "No computer-vision model is configured."
-        },
-        "llm_encoder": {
-          "status": "FAILED",
-          "provider": "sap_ai_core",
-          "model": "claude-sonnet-4",
-          "reason": "Client error '400 Bad Request' for url 'https://api.ai.prod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/d0c96def0a7aa871/v2/completion'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
-          "findings": []
-        }
-      }
-    },
-    {
-      "file_id": "FILE-9FB9160C5286",
-      "claim_id": "CLM-DEMO-10001",
-      "document_type": "POLICE_REPORT",
-      "original_filename": "02_police_report.pdf",
-      "stored_filename": "de20461c67f0479d8126b1970e081d2b.pdf",
-      "content_type": "application/pdf",
-      "file_size": 3385,
-      "checksum": "dd425accebb1073c78626b489fa092e540c06e54f96cd88998b9533653bde8de",
-      "upload_timestamp": "2026-06-16T07:14:04.075160Z",
-      "analysis_status": "COMPLETED",
-      "analysis_result": {
-        "text_preview": "SAP Fioneer\nCLAIMS INTELLIGENCE DEMO\nDEMO - NOT A REAL DOCUMENT\nSynthetic evidence generated for fraud-detection testing only.\nPage 1\n POLICE REPORT\nSupporting document\nPolice report number\nBER-DEMO-2026-0510-1842\nPolice report date\n2026-05-10\nIncident date\n2026-05-10\nIncident time\n02:15\nClaim ID\nCLM-DEMO-10001\nLocation\nInvalidenstrasse, Berlin\nPARTIES\nVehicle A\nDemo Motors Sedan / driver Alex Demo\nVehicle B\nFictional Compact / driver Jordan Example\nInjuries\nNone reported\nThird party involved\nYes\nINCIDENT SUMMARY\nVehicle A and Vehicle B made contact at low speed near an intersection. Vehicle A showed visible damage to the front\nbumper and left headlamp. Both drivers exchanged synthetic insurance details. No towing was required.\nOFFICER OBSERVATIONS\nRoad surface was dry and street lighting was operational. Photographs were declared by the claimant. This is a fictional\npolice report created only for software demonstration and testing.\nRECORDED BY\nOfficer DEMO-417 \u00b7 Berlin Test Precinct\n",
-        "text_length": 999,
-        "extraction_successful": true,
-        "possible_dates": [
-          "2026-05-10",
-          "2026-05-10"
-        ],
-        "possible_amounts": [],
-        "possible_invoice_numbers": [],
-        "bank_detail_hash": null,
-        "detected_document_type": "POLICE_REPORT",
-        "ocr": {
-          "status": "DISABLED",
-          "reason": "OCR is disabled by configuration."
-        },
-        "findings": [],
-        "llm_encoder": {
-          "status": "FAILED",
-          "provider": "sap_ai_core",
-          "model": "claude-sonnet-4",
-          "reason": "Client error '400 Bad Request' for url 'https://api.ai.prod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/d0c96def0a7aa871/v2/completion'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
-          "findings": []
-        }
-      }
-    },
-    {
-      "file_id": "FILE-C6AE31053E28",
+      "file_id": "FILE-8006B9395227",
       "claim_id": "CLM-DEMO-10001",
       "document_type": "REPAIR_INVOICE",
       "original_filename": "01_repair_invoice.pdf",
-      "stored_filename": "dec2897309d741a7a6e277b44192955c.pdf",
+      "stored_filename": "2171f3b169484ad781227714b12e40fc.pdf",
       "content_type": "application/pdf",
       "file_size": 3625,
       "checksum": "c38a92e697513bf854aebec8d876dc5674c27331b2c0d932244acd242e508caf",
-      "upload_timestamp": "2026-06-16T07:14:04.086274Z",
+      "upload_timestamp": "2026-06-16T07:32:17.481171Z",
       "analysis_status": "COMPLETED",
       "analysis_result": {
         "text_preview": "SAP Fioneer\nCLAIMS INTELLIGENCE DEMO\nDEMO - NOT A REAL DOCUMENT\nSynthetic evidence generated for fraud-detection testing only.\nPage 1\n VEHICLE REPAIR STATEMENT\nSupporting document\nInvoice number\nINV-DEMO-2026-0511\nInvoice date\n2026-05-11\nClaim ID\nCLM-DEMO-10001\nPolicy ID\nPOL-20001\nCustomer\nAlex Demo\nVehicle\n2020 Demo Motors Sedan / DEMO-VIN-0042\nREPAIR FACILITY\nFictional Auto Repair GmbH\nDemo Street 18, 10115 Berlin\nGarage ID: GAR-009\nREPAIR DETAILS\nRepair item\nQty\nUnit price\nAmount\nFront bumper assembly\n1\nEUR 2,400.00\nEUR 2,400.00\nLeft LED headlamp\n1\nEUR 1,650.00\nEUR 1,650.00\nPaint and body work\n12 h\nEUR 145.00\nEUR 1,740.00\nDiagnostics and calibration\n1\nEUR 890.00\nEUR 890.00\nParts and workshop materials\n1\nEUR 1,120.00\nEUR 1,120.00\nRepair total\nEUR 7,800.00\nPayment status\nOutstanding\nSynthetic bank reference\nDE00 0000 0000 0000 0000 00\nWORKSHOP STATEMENT\nRepairs relate to front bumper and left headlamp damage reported after the collision on 2026-05-10. This document\ncontains synthetic ",
@@ -155,6 +76,85 @@
           "reason": "OCR is disabled by configuration."
         },
         "findings": [],
+        "llm_encoder": {
+          "status": "FAILED",
+          "provider": "sap_ai_core",
+          "model": "claude-sonnet-4",
+          "reason": "Client error '400 Bad Request' for url 'https://api.ai.prod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/d0c96def0a7aa871/v2/completion'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+          "findings": []
+        }
+      }
+    },
+    {
+      "file_id": "FILE-179029FCCEBA",
+      "claim_id": "CLM-DEMO-10001",
+      "document_type": "POLICE_REPORT",
+      "original_filename": "02_police_report.pdf",
+      "stored_filename": "85cf15a62f234a808de05becfbbbe953.pdf",
+      "content_type": "application/pdf",
+      "file_size": 3385,
+      "checksum": "dd425accebb1073c78626b489fa092e540c06e54f96cd88998b9533653bde8de",
+      "upload_timestamp": "2026-06-16T07:32:17.493278Z",
+      "analysis_status": "COMPLETED",
+      "analysis_result": {
+        "text_preview": "SAP Fioneer\nCLAIMS INTELLIGENCE DEMO\nDEMO - NOT A REAL DOCUMENT\nSynthetic evidence generated for fraud-detection testing only.\nPage 1\n POLICE REPORT\nSupporting document\nPolice report number\nBER-DEMO-2026-0510-1842\nPolice report date\n2026-05-10\nIncident date\n2026-05-10\nIncident time\n02:15\nClaim ID\nCLM-DEMO-10001\nLocation\nInvalidenstrasse, Berlin\nPARTIES\nVehicle A\nDemo Motors Sedan / driver Alex Demo\nVehicle B\nFictional Compact / driver Jordan Example\nInjuries\nNone reported\nThird party involved\nYes\nINCIDENT SUMMARY\nVehicle A and Vehicle B made contact at low speed near an intersection. Vehicle A showed visible damage to the front\nbumper and left headlamp. Both drivers exchanged synthetic insurance details. No towing was required.\nOFFICER OBSERVATIONS\nRoad surface was dry and street lighting was operational. Photographs were declared by the claimant. This is a fictional\npolice report created only for software demonstration and testing.\nRECORDED BY\nOfficer DEMO-417 \u00b7 Berlin Test Precinct\n",
+        "text_length": 999,
+        "extraction_successful": true,
+        "possible_dates": [
+          "2026-05-10",
+          "2026-05-10"
+        ],
+        "possible_amounts": [],
+        "possible_invoice_numbers": [],
+        "bank_detail_hash": null,
+        "detected_document_type": "POLICE_REPORT",
+        "ocr": {
+          "status": "DISABLED",
+          "reason": "OCR is disabled by configuration."
+        },
+        "findings": [],
+        "llm_encoder": {
+          "status": "FAILED",
+          "provider": "sap_ai_core",
+          "model": "claude-sonnet-4",
+          "reason": "Client error '400 Bad Request' for url 'https://api.ai.prod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/d0c96def0a7aa871/v2/completion'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+          "findings": []
+        }
+      }
+    },
+    {
+      "file_id": "FILE-E4C66B9DC9D1",
+      "claim_id": "CLM-DEMO-10001",
+      "document_type": "DAMAGE_PHOTO",
+      "original_filename": "car-damage.webp",
+      "stored_filename": "3ae7e670a1be4a4dafcc0ceb690b3ce6.webp",
+      "content_type": "image/webp",
+      "file_size": 74348,
+      "checksum": "8c0c63f4fde9785b99aba6a6e4cda30e8631f5f8e167e8733f1dd9131142c127",
+      "upload_timestamp": "2026-06-16T07:32:17.513932Z",
+      "analysis_status": "COMPLETED",
+      "analysis_result": {
+        "width": 600,
+        "height": 400,
+        "format": "WEBP",
+        "exif_timestamp": null,
+        "checksum": "8c0c63f4fde9785b99aba6a6e4cda30e8631f5f8e167e8733f1dd9131142c127",
+        "metadata_extracted": true,
+        "findings": [
+          {
+            "code": "LOW_RESOLUTION_IMAGE",
+            "message": "Image resolution is too low for reliable damage review.",
+            "severity": "MEDIUM"
+          }
+        ],
+        "damage_severity": {
+          "status": "UNKNOWN",
+          "reason": "Image AI is disabled; no damage severity model is configured."
+        },
+        "description_consistency": {
+          "status": "UNKNOWN",
+          "reason": "No computer-vision model is configured."
+        },
         "llm_encoder": {
           "status": "FAILED",
           "provider": "sap_ai_core",

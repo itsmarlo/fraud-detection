@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 286 48" role="img" aria-labelledby="title">
+  <title id="title">SAP Fioneer</title>
+  <g fill="#fff">
+    <text x="0" y="35" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" letter-spacing="-1.1">SAP Fioneer</text>
+  </g>
+  <g fill="#ffd43b">
+    <rect x="218" y="10" width="5" height="5"/>
+    <rect x="226" y="10" width="5" height="5"/>
+    <rect x="234" y="10" width="5" height="5"/>
+    <rect x="242" y="10" width="5" height="5"/>
+    <rect x="250" y="10" width="5" height="5"/>
+    <rect x="218" y="18" width="5" height="5"/>
+    <rect x="226" y="18" width="5" height="5"/>
+    <rect x="234" y="18" width="5" height="5"/>
+    <rect x="242" y="18" width="5" height="5"/>
+    <rect x="218" y="26" width="5" height="5"/>
+    <rect x="226" y="26" width="5" height="5"/>
+    <rect x="234" y="26" width="5" height="5"/>
+  </g>
+</svg>

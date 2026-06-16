@@ -99,10 +99,6 @@ def score_structured_claim(claim: ClaimInput) -> tuple[dict[str, float], list[Ri
     if claim.garage_previous_suspicious_claims >= 5:
         network_score += 45
         findings.append(reason("GARAGE_NETWORK_RISK", "Garage has a high-risk claim network.", RiskLevel.HIGH, 45, "network_risk"))
-    if claim.third_party_involved and not claim.has_witness_statement:
-        network_score += 30
-        findings.append(reason("MISSING_WITNESS_STATEMENT", "Third party is involved but no witness statement is available.", RiskLevel.HIGH, 30, "network_risk"))
-
     components = {
         "policyholder_history": _bounded(policy_score),
         "claim_behavior": _bounded(behavior_score),

@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import ssl
 import time
 from pathlib import Path
 from typing import Any
@@ -9,8 +10,9 @@ import httpx
 
 from app.core.config import Settings, get_settings
 from app.models.claim_schema import ClaimInput
-from app.models.encoder_schema import MultimodalEncoding
+from app.models.encoder_schema import ImageSetConsistency, MultimodalEncoding
 from app.models.file_schema import DocumentType
+from app.services.image_support import ai_image_payload
 
 
 SYSTEM_PROMPT = """You analyze insurance-claim evidence.
@@ -29,10 +31,27 @@ class AICoreOrchestrationService:
     ) -> None:
         self.settings = settings or get_settings()
         self.http_client = http_client or httpx.Client(
-            timeout=self.settings.llm_timeout_seconds
+            timeout=self.settings.llm_timeout_seconds,
+            verify=self._ssl_context(),
         )
         self._cached_token: str | None = None
         self._token_expires_at = 0.0
+
+    def _ssl_context(self) -> ssl.SSLContext:
+        configured = self.settings.ssl_cert_file
+        environment_bundle = os.getenv("SSL_CERT_FILE") or os.getenv(
+            "REQUESTS_CA_BUNDLE"
+        )
+        certificate_path = configured or (
+            Path(environment_bundle) if environment_bundle else None
+        )
+        if certificate_path:
+            if not certificate_path.exists():
+                raise ValueError(
+                    f"Configured SSL certificate file does not exist: {certificate_path}"
+                )
+            return ssl.create_default_context(cafile=str(certificate_path))
+        return ssl.create_default_context()
 
     def analyze(
         self,
@@ -60,6 +79,27 @@ class AICoreOrchestrationService:
         response.raise_for_status()
         content = self._response_content(response.json())
         return MultimodalEncoding.model_validate_json(content)
+
+    def compare_images(
+        self,
+        images: list[tuple[Path, str]],
+        claim: ClaimInput | None,
+    ) -> ImageSetConsistency:
+        credentials = self._credentials()
+        token = self._access_token(credentials)
+        response = self.http_client.post(
+            self._completion_url(credentials),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "AI-Resource-Group": credentials["resource_group"],
+                "Content-Type": "application/json",
+            },
+            json=self._image_comparison_payload(images, claim),
+        )
+        response.raise_for_status()
+        return ImageSetConsistency.model_validate_json(
+            self._response_content(response.json())
+        )
 
     def _access_token(self, credentials: dict[str, str]) -> str:
         if self._cached_token and time.monotonic() < self._token_expires_at:
@@ -211,6 +251,77 @@ class AICoreOrchestrationService:
             }
         return {"config": {"modules": modules}}
 
+    def _image_comparison_payload(
+        self,
+        images: list[tuple[Path, str]],
+        claim: ClaimInput | None,
+    ) -> dict[str, Any]:
+        content: list[dict[str, Any]] = [
+            {
+                "type": "text",
+                "text": (
+                    "Compare all supplied claim photos together. Determine whether "
+                    "they show the same insured vehicle. Use visible body type, color, "
+                    "lights, grille, wheels, badges, registration details, damage "
+                    "placement, and stable distinguishing features. Do not mark images "
+                    "inconsistent merely because of angle, crop, lighting, or zoom. "
+                    "Return UNKNOWN when there is not enough visible evidence. "
+                    "Reported damage: "
+                    + (claim.damage_description if claim else "Not provided")
+                ),
+            }
+        ]
+        content.extend(self._file_content(path, content_type) for path, content_type in images)
+        modules: dict[str, Any] = {
+            "prompt_templating": {
+                "prompt": {
+                    "template": [
+                        {
+                            "role": "system",
+                            "content": (
+                                "You compare insurance claim photographs. Report only "
+                                "visible cross-image vehicle consistency. Do not make a "
+                                "fraud determination."
+                            ),
+                        },
+                        {"role": "user", "content": content},
+                    ],
+                    "response_format": {
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": "claim_image_set_consistency",
+                            "description": "Cross-image insured vehicle consistency.",
+                            "schema": ImageSetConsistency.model_json_schema(),
+                            "strict": False,
+                        },
+                    },
+                },
+                "model": {
+                    "name": self.settings.aicore_llm_model,
+                    "version": "latest",
+                    "params": {"temperature": 0},
+                    "timeout": int(self.settings.llm_timeout_seconds),
+                },
+            }
+        }
+        if self.settings.masking_required:
+            modules["masking"] = {
+                "providers": [
+                    {
+                        "type": "sap_data_privacy_integration",
+                        "method": "pseudonymization",
+                        "entities": [
+                            {"type": "profile-person"},
+                            {"type": "profile-email"},
+                            {"type": "profile-phone"},
+                            {"type": "profile-address"},
+                        ],
+                        "mask_file_input_method": "anonymization",
+                    }
+                ]
+            }
+        return {"config": {"modules": modules}}
+
     @staticmethod
     def _analysis_request(
         document_type: DocumentType,
@@ -234,13 +345,16 @@ class AICoreOrchestrationService:
 
     @staticmethod
     def _file_content(file_path: Path, content_type: str) -> dict[str, Any]:
-        encoded = base64.b64encode(file_path.read_bytes()).decode("ascii")
-        data_url = f"data:{content_type};base64,{encoded}"
         if content_type.startswith("image/"):
+            image_bytes, image_content_type = ai_image_payload(file_path, content_type)
+            encoded = base64.b64encode(image_bytes).decode("ascii")
+            data_url = f"data:{image_content_type};base64,{encoded}"
             return {
                 "type": "image_url",
                 "image_url": {"url": data_url, "detail": "high"},
             }
+        encoded = base64.b64encode(file_path.read_bytes()).decode("ascii")
+        data_url = f"data:{content_type};base64,{encoded}"
         return {
             "type": "file",
             "file": {"file_data": data_url, "filename": file_path.name},

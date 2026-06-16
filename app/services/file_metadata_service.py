@@ -53,6 +53,19 @@ class FileMetadataService:
     def list_all(self) -> list[FileMetadata]:
         return [FileMetadata.model_validate(item) for item in self._read()["files"]]
 
+    def remove_for_claim(self, claim_id: str) -> list[FileMetadata]:
+        data = self._read()
+        removed = [
+            FileMetadata.model_validate(item)
+            for item in data["files"]
+            if item["claim_id"] == claim_id
+        ]
+        data["files"] = [
+            item for item in data["files"] if item["claim_id"] != claim_id
+        ]
+        self._write(data)
+        return removed
+
     def update_analysis(
         self,
         file_id: str,

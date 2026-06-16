@@ -6,9 +6,10 @@ from app.core.config import Settings, get_settings
 from app.core.risk_levels import RiskLevel
 from app.core.rules import reason
 from app.models.claim_schema import ClaimInput
-from app.models.encoder_schema import MultimodalEncoding
+from app.models.encoder_schema import ImageSetConsistency, MultimodalEncoding
 from app.models.file_schema import DocumentType
 from app.services.aicore_orchestration_service import AICoreOrchestrationService
+from app.services.image_support import ai_image_payload
 
 
 SYSTEM_PROMPT = """You analyze insurance-claim evidence.
@@ -28,9 +29,12 @@ class MultimodalEncoderService:
     ) -> None:
         self.settings = settings or get_settings()
         self._client = client
-        self.aicore_service = aicore_service or AICoreOrchestrationService(
-            settings=self.settings
-        )
+        self.aicore_service = aicore_service
+
+    def _get_aicore_service(self) -> AICoreOrchestrationService:
+        if self.aicore_service is None:
+            self.aicore_service = AICoreOrchestrationService(settings=self.settings)
+        return self.aicore_service
 
     def analyze(
         self,
@@ -63,6 +67,86 @@ class MultimodalEncoderService:
             claim,
         )
 
+    def compare_images(
+        self,
+        images: list[tuple[Path, str]],
+        claim: ClaimInput,
+    ) -> dict[str, Any]:
+        if len(images) < 2:
+            return {
+                "status": "NOT_APPLICABLE",
+                "reason": "At least two images are required for comparison.",
+                "findings": [],
+            }
+        if not self.settings.enable_llm_encoder:
+            return {
+                "status": "DISABLED",
+                "reason": "Cross-image AI comparison is disabled by configuration.",
+                "findings": [],
+            }
+        try:
+            if self.settings.llm_provider == "btp":
+                result = self._get_aicore_service().compare_images(images, claim)
+                provider = "sap_ai_core"
+                model = self.settings.aicore_llm_model
+            else:
+                if not self.settings.openai_api_key and self._client is None:
+                    raise ValueError("OPENAI_API_KEY is not configured.")
+                content = [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            "Compare all supplied claim photos together and determine "
+                            "whether they show the same insured vehicle. Consider body "
+                            "type, color, lights, grille, wheels, badges, registration "
+                            "details, damage placement, and stable distinguishing "
+                            "features. Ignore differences caused only by angle, crop, "
+                            "lighting, or zoom. Return UNKNOWN when evidence is limited. "
+                            f"Reported damage: {claim.damage_description}"
+                        ),
+                    },
+                    *[
+                        self._file_content(path, content_type)
+                        for path, content_type in images
+                    ],
+                ]
+                response = self._get_client().responses.parse(
+                    model=self.settings.llm_model,
+                    input=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "Compare insurance claim photographs for same-vehicle "
+                                "consistency. Report visible facts only and do not make "
+                                "a fraud determination."
+                            ),
+                        },
+                        {"role": "user", "content": content},
+                    ],
+                    text_format=ImageSetConsistency,
+                )
+                result = response.output_parsed
+                if result is None:
+                    raise ValueError("The model did not return structured output")
+                provider = "openai"
+                model = self.settings.llm_model
+            payload = result.model_dump(mode="json")
+            payload.update(
+                {
+                    "status": "COMPLETED",
+                    "provider": provider,
+                    "model": model,
+                    "findings": self._image_set_findings(result),
+                }
+            )
+            return payload
+        except Exception as exc:
+            return {
+                "status": "FAILED",
+                "reason": str(exc),
+                "findings": [],
+            }
+
     def _analyze_with_btp(
         self,
         file_path: Path,
@@ -71,7 +155,7 @@ class MultimodalEncoderService:
         claim: ClaimInput | None,
     ) -> dict[str, Any]:
         try:
-            encoding = self.aicore_service.analyze(
+            encoding = self._get_aicore_service().analyze(
                 file_path=file_path,
                 content_type=content_type,
                 document_type=document_type,
@@ -176,13 +260,15 @@ class MultimodalEncoderService:
 
     @staticmethod
     def _file_content(file_path: Path, content_type: str) -> dict[str, str]:
-        encoded = base64.b64encode(file_path.read_bytes()).decode("ascii")
         if content_type.startswith("image/"):
+            image_bytes, image_content_type = ai_image_payload(file_path, content_type)
+            encoded = base64.b64encode(image_bytes).decode("ascii")
             return {
                 "type": "input_image",
-                "image_url": f"data:{content_type};base64,{encoded}",
+                "image_url": f"data:{image_content_type};base64,{encoded}",
                 "detail": "high",
             }
+        encoded = base64.b64encode(file_path.read_bytes()).decode("ascii")
         return {
             "type": "input_file",
             "filename": file_path.name,
@@ -210,6 +296,25 @@ class MultimodalEncoderService:
                 severity,
                 min(80, encoding.evidence_risk_score),
                 "multimodal_encoder",
+            ).model_dump(mode="json")
+        ]
+
+    @staticmethod
+    def _image_set_findings(
+        comparison: ImageSetConsistency,
+    ) -> list[dict[str, Any]]:
+        if (
+            comparison.vehicle_consistency != "INCONSISTENT"
+            or comparison.confidence_score < 70
+        ):
+            return []
+        return [
+            reason(
+                "DIFFERENT_VEHICLES_ACROSS_PHOTOS",
+                comparison.explanation,
+                RiskLevel.VERY_HIGH,
+                80,
+                "image",
             ).model_dump(mode="json")
         ]
 

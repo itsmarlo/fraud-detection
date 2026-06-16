@@ -26,7 +26,6 @@ def generate_sample_data(rows: int = 160, seed: int = 42) -> None:
         missing_police = int(rng.random() < 0.35)
         missing_photos = int(rng.random() < 0.18)
         missing_invoice = int(rng.random() < 0.22)
-        third_without_witness = int(rng.random() < 0.14)
         days_since_policy = int(rng.integers(0, 700))
         report_delay = int(rng.choice([0, 1, 2, 3, 5, 10, 20, 45], p=[.2, .2, .15, .1, .1, .1, .08, .07]))
 
@@ -44,7 +43,6 @@ def generate_sample_data(rows: int = 160, seed: int = 42) -> None:
             + 0.4 * missing_police
             + 0.5 * missing_photos
             + 0.45 * missing_invoice
-            + 0.5 * third_without_witness
             + rng.normal(0, 0.5)
         )
         fraud_label = int(risk > 3.8)
@@ -66,7 +64,6 @@ def generate_sample_data(rows: int = 160, seed: int = 42) -> None:
                 "missing_police_report": missing_police,
                 "missing_damage_photos": missing_photos,
                 "missing_repair_invoice": missing_invoice,
-                "third_party_without_witness": third_without_witness,
                 "fraud_label": fraud_label,
             }
         )

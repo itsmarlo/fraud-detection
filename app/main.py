@@ -1,7 +1,10 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api import (
     routes_claims,
@@ -14,6 +17,7 @@ from app.core.config import get_settings
 
 
 settings = get_settings()
+WEB_DIR = Path(__file__).parent / "web"
 
 
 @asynccontextmanager
@@ -36,6 +40,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.mount("/static", StaticFiles(directory=WEB_DIR / "static"), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/demo")
+
+
+@app.get("/demo", include_in_schema=False)
+def demo() -> FileResponse:
+    return FileResponse(WEB_DIR / "index.html")
 
 app.include_router(routes_health.router)
 app.include_router(routes_claims.router)

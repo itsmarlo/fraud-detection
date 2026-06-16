@@ -1,7 +1,9 @@
 from pathlib import Path
 
+from app.services.image_support import IMAGE_EXTENSIONS
 
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".pdf", ".txt", ".docx"}
+
+ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | {".pdf", ".txt", ".docx"}
 EXECUTABLE_EXTENSIONS = {".exe", ".dll", ".bat", ".cmd", ".com", ".sh", ".msi", ".jar", ".js"}
 
 

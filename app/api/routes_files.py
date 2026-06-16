@@ -46,6 +46,11 @@ def list_claim_files(claim_id: str) -> list[FilePublicMetadata]:
     ]
 
 
+@router.delete("/claims/{claim_id}/files")
+def delete_claim_files(claim_id: str) -> dict[str, int]:
+    return {"deleted": file_storage_service.remove_for_claim(claim_id)}
+
+
 @router.post("/files/{file_id}/analyze", response_model=FileAnalysisResponse)
 def analyze_file(file_id: str) -> FileAnalysisResponse:
     try:

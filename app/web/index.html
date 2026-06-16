@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Motor Claims Risk Assessment | SAP Fioneer</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/demo" aria-label="SAP Fioneer Motor Claims Risk Assessment home">
+        <img src="/static/sap-fioneer-logo.svg" alt="SAP Fioneer">
+        <span class="product-name">Motor Claims Risk Assessment</span>
+      </a>
+      <div class="header-meta">
+        <span class="demo-badge">PROTOTYPE</span>
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <span id="systemStatus">Checking API</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Claims handling workspace</p>
+          <h1>Motor claim risk assessment</h1>
+          <p class="hero-copy">
+            Enter the claim details and attach available evidence to calculate a
+            risk score and identify items that may require further review.
+          </p>
+        </div>
+        <div class="hero-stat">
+          <span>Assessment methods</span>
+          <strong>Claim rules, model scoring, and evidence analysis</strong>
+          <small>Output for claims handler review</small>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <form id="claimForm" class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="step">01</span>
+              <h2>Claim information</h2>
+            </div>
+            <button type="button" class="text-button" id="toggleAdvanced">
+              View additional details
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              Claim ID
+              <input name="claim_id" value="CLM-DEMO-10001" required>
+            </label>
+            <label>
+              Accident date
+              <input name="accident_date" type="date" value="2026-05-10" required>
+            </label>
+            <label>
+              Requested amount
+              <span class="money-input">
+                <span>€</span>
+                <input name="claim_amount" type="number" value="8200" min="0" required>
+              </span>
+            </label>
+            <label>
+              Vehicle value
+              <span class="money-input">
+                <span>€</span>
+                <input name="vehicle_value" type="number" value="15000" min="1" required>
+              </span>
+            </label>
+            <label>
+              Estimated repair cost
+              <span class="money-input">
+                <span>€</span>
+                <input name="repair_estimate_amount" type="number" value="7800" min="0" required>
+              </span>
+            </label>
+            <label>
+              Notification date
+              <input name="claim_report_date" type="date" value="2026-05-20" required>
+            </label>
+            <label class="full-width">
+              Incident and damage summary
+              <textarea name="damage_description" rows="3" required>Front bumper and left headlamp damaged after collision.</textarea>
+            </label>
+          </div>
+
+          <div id="advancedFields" class="advanced-fields" hidden>
+            <div class="form-grid">
+              <label>Policy ID<input name="policy_id" value="POL-20001"></label>
+              <label>Policyholder ID<input name="policyholder_id" value="CUST-30001"></label>
+              <label>Policy effective date<input name="policy_start_date" type="date" value="2025-05-01"></label>
+              <label>Policy expiry date<input name="policy_end_date" type="date" value="2027-04-30"></label>
+              <label>Coverage type<input name="coverage_type" value="COMPREHENSIVE"></label>
+              <label>Driver age<input name="driver_age" type="number" value="27"></label>
+              <label>Vehicle age<input name="vehicle_age_years" type="number" value="6"></label>
+              <label>Vehicle mileage<input name="vehicle_mileage" type="number" value="92000"></label>
+              <label>Prior claims<input name="number_of_previous_claims" type="number" value="0"></label>
+              <label>Prior declined claims<input name="number_of_previous_rejected_claims" type="number" value="0"></label>
+              <label>Premium payment status<input name="premium_payment_status" value="CURRENT"></label>
+              <label>Accident location<input name="accident_location" value="Berlin"></label>
+              <label>Incident hour<input name="accident_time_hour" type="number" value="14" min="0" max="23"></label>
+              <label>Repair facility ID<input name="garage_id" value="GAR-009"></label>
+              <label>Prior facility alerts<input name="garage_previous_suspicious_claims" type="number" value="0"></label>
+              <label>Invoice date<input name="invoice_date" type="date" value="2026-05-11"></label>
+            </div>
+            <div class="check-grid">
+              <label><input name="recent_policy_change" type="checkbox"> Recent policy change</label>
+              <label><input name="third_party_involved" type="checkbox" checked> Third party involved</label>
+            </div>
+          </div>
+
+          <div class="panel-heading upload-heading">
+            <div>
+              <span class="step">02</span>
+              <h2>Supporting evidence</h2>
+            </div>
+            <span class="hint">Required for assessment</span>
+          </div>
+
+          <label class="document-type">
+            Document classification
+            <select id="documentType">
+              <option value="REPAIR_INVOICE">Repair invoice</option>
+              <option value="POLICE_REPORT">Police report</option>
+              <option value="ACCIDENT_REPORT">Accident report</option>
+              <option value="CLAIM_FORM">Claim form</option>
+              <option value="DRIVER_LICENSE">Driver license</option>
+              <option value="VEHICLE_REGISTRATION">Vehicle registration</option>
+              <option value="WITNESS_STATEMENT">Witness statement</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </label>
+
+          <div class="upload-grid evidence-upload-grid">
+            <label class="dropzone">
+              <input
+                id="photoFiles"
+                type="file"
+                accept="image/*,.heic,.heif,.avif,.tif,.tiff"
+                multiple
+              >
+              <span class="upload-icon">+</span>
+              <strong>Damage imagery</strong>
+              <small>Select one or more incident images</small>
+              <span class="file-summary" id="photoSummary">No photos selected</span>
+            </label>
+
+            <label class="dropzone">
+              <input id="documentFiles" type="file" accept=".pdf,.docx,.txt" multiple>
+              <span class="upload-icon">+</span>
+              <strong>Add classified documents</strong>
+              <small>Select documents matching the classification above</small>
+              <span class="file-summary" id="documentSummary">No documents added</span>
+            </label>
+          </div>
+
+          <div id="photoQueue" class="document-queue" hidden></div>
+          <div id="documentQueue" class="document-queue" hidden></div>
+          <p id="evidenceValidation" class="evidence-validation" hidden>
+            Add at least one image or document before running the assessment.
+          </p>
+
+          <button class="primary-button" id="analyzeButton" type="submit">
+            <span>Run risk assessment</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <p class="form-note">
+            Uploaded files may be processed by the configured AI service. The
+            resulting score is advisory and requires claims handler review.
+          </p>
+        </form>
+
+        <aside class="panel results-panel" id="resultsPanel">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-visual">
+              <span></span><span></span><span></span>
+            </div>
+            <p class="eyebrow">Assessment results</p>
+            <h2>No assessment has been run</h2>
+            <p>Add supporting evidence, complete the claim information, and run the assessment.</p>
+          </div>
+
+          <div id="loadingState" class="loading-state" hidden>
+            <div class="loader"></div>
+            <p class="eyebrow">Assessment in progress</p>
+            <h2 id="loadingTitle">Preparing claim data</h2>
+            <div class="progress-track"><span id="progressBar"></span></div>
+            <p id="loadingDetail">Validating the submitted information</p>
+          </div>
+
+          <div id="resultContent" hidden>
+            <div class="result-header">
+              <div>
+                <p class="eyebrow">Claim risk assessment</p>
+                <h2 id="resultClaimId">Claim</h2>
+              </div>
+              <span class="risk-pill" id="riskPill">LOW</span>
+            </div>
+
+            <div class="score-block">
+              <div class="score-ring" id="scoreRing">
+                <div>
+                  <strong id="fraudScore">0</strong>
+                  <span>/ 100</span>
+                </div>
+              </div>
+              <div>
+                <span class="score-label">Suggested next step</span>
+                <strong id="recommendedAction">Review</strong>
+                <small id="confidenceLabel">0% confidence</small>
+              </div>
+            </div>
+
+            <div class="metric-grid">
+              <div><span>Claim data</span><strong id="structuredScore">0</strong></div>
+              <div><span>Documents</span><strong id="documentScore">0</strong></div>
+              <div><span>Imagery</span><strong id="imageScore">0</strong></div>
+              <div><span>Relationships</span><strong id="networkScore">0</strong></div>
+            </div>
+            <div class="calculation-summary">
+              <span>Rule assessment <strong id="ruleScore">0</strong></span>
+              <span>Tabular ML model <strong id="mlScore">Not available</strong></span>
+            </div>
+
+            <section class="result-section">
+              <div class="section-title">
+                <h3>Key risk indicators</h3>
+                <span id="reasonCount">0 findings</span>
+              </div>
+              <div id="reasonList" class="reason-list"></div>
+            </section>
+
+            <section class="result-section">
+              <div class="section-title">
+                <h3>Evidence assessment</h3>
+                <span id="fileCount">0 files</span>
+              </div>
+              <div id="fileList" class="file-list"></div>
+            </section>
+
+            <button type="button" class="secondary-button" id="resetButton">
+              Start a new assessment
+            </button>
+          </div>
+
+          <div id="errorState" class="error-state" hidden>
+            <span>!</span>
+            <h2>Assessment could not be completed</h2>
+            <p id="errorMessage">Confirm the service is available, then retry the assessment.</p>
+            <button type="button" class="secondary-button" id="retryButton">Return to claim</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

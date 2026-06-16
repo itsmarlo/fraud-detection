@@ -4,6 +4,34 @@ def test_health(client):
     assert response.json()["status"] == "OK"
 
 
+def test_demo_ui_and_static_assets(client):
+    root = client.get("/", follow_redirects=False)
+    assert root.status_code in {302, 307}
+    assert root.headers["location"] == "/demo"
+
+    page = client.get("/demo")
+    assert page.status_code == 200
+    assert "SAP Fioneer" in page.text
+    assert "Motor Claims Risk Assessment" in page.text
+    assert 'id="claimForm"' in page.text
+    assert "Required for assessment" in page.text
+    assert "Add at least one image or document" in page.text
+    assert "HEIC" not in page.text
+
+    stylesheet = client.get("/static/styles.css")
+    script = client.get("/static/app.js")
+    assert stylesheet.status_code == 200
+    assert script.status_code == 200
+    assert "predict-with-files" in script.text
+    assert "queuedPhotos" in script.text
+    assert "data-photo-index" in script.text
+    assert "inferredDocumentType" in script.text
+    assert "data-document-type-index" in script.text
+    assert 'id="ruleScore"' in page.text
+    assert 'name="number_of_previous_claims" type="number" value="0"' in page.text
+    assert 'name="premium_payment_status" value="CURRENT"' in page.text
+
+
 def test_score_claim(client, claim_payload):
     response = client.post("/api/v1/claims/score", json=claim_payload)
     assert response.status_code == 200
@@ -28,10 +56,10 @@ def test_predict_without_files(client, claim_payload):
         f"/api/v1/claims/{claim_payload['claim_id']}/predict-with-files",
         json=claim_payload,
     )
-    assert response.status_code == 200
-    assert response.json()["warnings"] == [
-        "No documents or images were uploaded. Fraud score confidence is reduced."
-    ]
+    assert response.status_code == 422
+    assert response.json()["detail"] == (
+        "Upload at least one supporting image or document before assessment."
+    )
 
 
 def test_reused_identity_hash_is_detected(client, claim_payload):

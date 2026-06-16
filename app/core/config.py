@@ -12,7 +12,11 @@ class Settings(BaseSettings):
     upload_dir: Path = Path("storage/uploads")
     metadata_file: Path = Path("storage/metadata.json")
     max_upload_size_mb: int = 20
-    allowed_image_types: str = "image/jpeg,image/png,image/webp"
+    allowed_image_types: str = (
+        "image/jpeg,image/png,image/webp,image/heic,image/heif,"
+        "image/heic-sequence,image/heif-sequence,image/avif,image/gif,"
+        "image/bmp,image/x-ms-bmp,image/tiff"
+    )
     allowed_document_types: str = (
         "application/pdf,text/plain,"
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -40,6 +44,7 @@ class Settings(BaseSettings):
     orch_deployment_url: str | None = None
     aicore_llm_model: str = "gpt-4o"
     masking_required: bool = True
+    ssl_cert_file: Path | None = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

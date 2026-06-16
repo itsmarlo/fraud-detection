@@ -11,13 +11,11 @@ from app.services.document_extraction_service import (
 from app.services.file_metadata_service import FileMetadataService, file_metadata_service
 from app.services.file_storage_service import FileStorageService, file_storage_service
 from app.services.image_analysis_service import ImageAnalysisService, image_analysis_service
+from app.services.image_support import IMAGE_EXTENSIONS
 from app.services.multimodal_encoder_service import (
     MultimodalEncoderService,
     multimodal_encoder_service,
 )
-
-
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 class FileAnalysisService:

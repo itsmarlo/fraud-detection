@@ -7,13 +7,18 @@ from uuid import uuid4
 from zipfile import BadZipFile, ZipFile
 
 from fastapi import UploadFile
-from PIL import Image, UnidentifiedImageError
+from PIL import UnidentifiedImageError
 from pypdf import PdfReader
 
 from app.core.config import get_settings
 from app.core.security import validate_extension
 from app.models.file_schema import DocumentType, FileMetadata
 from app.services.file_metadata_service import FileMetadataService, file_metadata_service
+from app.services.image_support import (
+    IMAGE_EXTENSIONS,
+    IMAGE_MIME_TYPES_BY_EXTENSION,
+    validate_image_content,
+)
 
 
 class FileValidationError(ValueError):
@@ -55,10 +60,7 @@ class FileStorageService:
         if content_type not in self.settings.allowed_mime_types:
             raise FileValidationError(f"Unsupported MIME type: {content_type or '(missing)'}")
         expected_mime_types = {
-            ".jpg": {"image/jpeg"},
-            ".jpeg": {"image/jpeg"},
-            ".png": {"image/png"},
-            ".webp": {"image/webp"},
+            **IMAGE_MIME_TYPES_BY_EXTENSION,
             ".pdf": {"application/pdf"},
             ".txt": {"text/plain"},
             ".docx": {
@@ -95,12 +97,18 @@ class FileStorageService:
             raise FileValidationError("Invalid stored filename")
         return candidate
 
+    def remove_for_claim(self, claim_id: str) -> int:
+        removed = self.metadata_service.remove_for_claim(claim_id)
+        for metadata in removed:
+            path = self.path_for(metadata)
+            path.unlink(missing_ok=True)
+        return len(removed)
+
     @staticmethod
     def _validate_content(extension: str, content: bytes) -> None:
         try:
-            if extension in {".jpg", ".jpeg", ".png", ".webp"}:
-                with Image.open(BytesIO(content)) as image:
-                    image.verify()
+            if extension in IMAGE_EXTENSIONS:
+                validate_image_content(extension, content)
             elif extension == ".pdf":
                 if not content.startswith(b"%PDF"):
                     raise FileValidationError("File content is not a PDF")

@@ -28,7 +28,6 @@ FEATURES = [
     "missing_police_report",
     "missing_damage_photos",
     "missing_repair_invoice",
-    "third_party_without_witness",
 ]
 
 MODEL_TYPE = "CalibratedHistGradientBoostingClassifier"
@@ -55,7 +54,6 @@ class ModelService:
             "missing_police_report": float(not claim.has_police_report),
             "missing_damage_photos": float(not claim.has_damage_photos),
             "missing_repair_invoice": float(not claim.has_repair_invoice),
-            "third_party_without_witness": float(claim.third_party_involved and not claim.has_witness_statement),
         }
 
     def train(self, csv_path: Path | None = None) -> TrainingResponse:
@@ -122,7 +120,10 @@ class ModelService:
         payload = self._load()
         if not payload:
             return None
-        frame = pd.DataFrame([self.claim_features(claim)])[payload["features"]]
+        features = self.claim_features(claim)
+        if not set(payload["features"]).issubset(features):
+            return None
+        frame = pd.DataFrame([features])[payload["features"]]
         return round(float(payload["model"].predict_proba(frame)[0][1] * 100), 2)
 
     def info(self) -> ModelInfoResponse:

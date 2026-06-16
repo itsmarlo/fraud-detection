@@ -24,6 +24,16 @@ class RecordingHttpClient:
         self.requests.append((url, kwargs))
         if url.endswith("/oauth/token"):
             return FakeResponse({"access_token": "token", "expires_in": 300})
+        schema_name = (
+            kwargs.get("json", {})
+            .get("config", {})
+            .get("modules", {})
+            .get("prompt_templating", {})
+            .get("prompt", {})
+            .get("response_format", {})
+            .get("json_schema", {})
+            .get("name")
+        )
         encoding = {
             "summary": "Visible bumper damage.",
             "detected_document_type": "DAMAGE_PHOTO",
@@ -38,6 +48,14 @@ class RecordingHttpClient:
             "damage_severity": "MODERATE",
             "description_consistency": "CONSISTENT",
         }
+        if schema_name == "claim_image_set_consistency":
+            encoding = {
+                "vehicle_consistency": "INCONSISTENT",
+                "confidence_score": 91,
+                "distinct_vehicle_count": 2,
+                "explanation": "The photographs show different vehicles.",
+                "comparison_observations": ["Different body color"],
+            }
         return FakeResponse(
             {
                 "orchestration_result": {
@@ -106,6 +124,34 @@ def test_aicore_uses_oauth_resource_group_multimodal_and_masking(tmp_path):
         request for request in http_client.requests if request[0].endswith("/oauth/token")
     ]
     assert len(token_requests) == 1
+
+
+def test_aicore_compares_all_claim_images_in_one_request(tmp_path):
+    first = tmp_path / "front.jpg"
+    second = tmp_path / "rear.jpg"
+    first.write_bytes(b"first-image")
+    second.write_bytes(b"second-image")
+    http_client = RecordingHttpClient()
+    service = AICoreOrchestrationService(
+        settings=settings(),
+        http_client=http_client,
+    )
+
+    result = service.compare_images(
+        [(first, "image/jpeg"), (second, "image/jpeg")],
+        claim=None,
+    )
+
+    assert result.vehicle_consistency == "INCONSISTENT"
+    _, completion_request = http_client.requests[1]
+    content = completion_request["json"]["config"]["modules"][
+        "prompt_templating"
+    ]["prompt"]["template"][1]["content"]
+    assert [item["type"] for item in content] == [
+        "text",
+        "image_url",
+        "image_url",
+    ]
 
 
 def test_aicore_accepts_cloud_foundry_service_binding(monkeypatch):

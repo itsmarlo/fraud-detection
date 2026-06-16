@@ -41,6 +41,10 @@ Open Swagger UI at `http://localhost:8000/docs`. Run tests with:
 pytest
 ```
 
+Open the interactive claim review demo at `http://localhost:8000/demo`. It
+collects claim context, uploads photos and documents, analyzes each file, and
+renders the combined fraud score and explainable findings.
+
 Generate fresh deterministic sample data and train the model:
 
 ```bash
@@ -63,6 +67,14 @@ a bounded `25%` weight inside the relevant image or document component, while
 rules and the calibrated tabular model remain separate. Material
 inconsistencies are exposed as explainable `LLM_EVIDENCE_INCONSISTENCY`
 findings.
+
+When at least two damage images are uploaded, the configured vision-capable
+model also receives the images together for a cross-image vehicle consistency
+check. A confident indication that the photographs show different vehicles
+adds `DIFFERENT_VEHICLES_ACROSS_PHOTOS` to the image findings. Differences that
+can be explained by angle, crop, lighting, or limited visibility should return
+`UNKNOWN`; if the comparison service is unavailable, the result contains an
+explicit assessment notice rather than treating consistency as verified.
 
 Install dependencies, then configure `.env`:
 
@@ -228,11 +240,15 @@ Risk bands and actions:
 | 61-80 | HIGH | Special Investigation Unit review |
 | 81-100 | VERY_HIGH | Block payment and investigate |
 
-Confidence reflects structured completeness, claim form, damage photos, repair invoice, accident report, high-value police report, successful text extraction, and successful image metadata extraction. A structured-only result includes a reduced-confidence warning.
+Confidence reflects required-evidence completeness and processing quality. Missing claim forms, damage photos, repair invoices, driver licenses, vehicle registrations, and high-value police reports reduce confidence. Successful text extraction, image metadata extraction, and AI encoding provide smaller quality bonuses.
 
 ## File And Analysis Behavior
 
-Supported images are JPEG, PNG, and WebP. Supported documents are PDF, TXT, and DOCX. Uploads use generated filenames, SHA-256 checksums, extension and MIME allowlists, size limits, and content validation. Executables and corrupt files are rejected.
+Supported images are JPEG, PNG, WebP, HEIC/HEIF (including iPhone photos),
+AVIF, GIF, BMP, and TIFF. Supported documents are PDF, TXT, and DOCX.
+Uploads use generated filenames, SHA-256 checksums, extension and MIME
+allowlists, size limits, and content validation. Executables, SVG files, and
+corrupt files are rejected.
 
 PDF text is extracted with `pypdf`, DOCX with `python-docx`, TXT as UTF-8, and images with Pillow. Extraction finds date, amount, invoice-number, and hashed bank-detail candidates. Image analysis records dimensions, format, EXIF time, low resolution, pre-accident capture, and duplicate hashes across claims.
 

@@ -84,17 +84,6 @@ class NetworkRiskService:
                     "network",
                 )
             )
-        if claim.third_party_involved and not claim.has_witness_statement:
-            score += 25
-            findings.append(
-                reason(
-                    "THIRD_PARTY_WITHOUT_WITNESS",
-                    "Third-party involvement has no supporting witness statement.",
-                    RiskLevel.HIGH,
-                    25,
-                    "network",
-                )
-            )
         self.metadata_service.register_claim_identity(
             claim.claim_id,
             claim.bank_account_hash,

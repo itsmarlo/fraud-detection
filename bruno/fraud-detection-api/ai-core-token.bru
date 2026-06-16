@@ -1,0 +1,23 @@
+meta {
+  name: AI Core - Get Token
+  type: http
+  seq: 20
+}
+
+post {
+  url: {{AICORE_TOKEN_URL}}/oauth/token?grant_type=client_credentials
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{AICORE_CLIENT_ID}}
+  password: {{AICORE_CLIENT_SECRET}}
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (res.getStatus() === 200 && body && body.access_token) {
+    bru.setEnvVar("TOKEN", body.access_token, { persist: false });
+  }
+}

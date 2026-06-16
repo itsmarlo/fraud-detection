@@ -1,0 +1,19 @@
+meta {
+  name: AI Core - List Scenarios
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{AI_API_URL}}/v2/lm/scenarios
+  body: none
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}

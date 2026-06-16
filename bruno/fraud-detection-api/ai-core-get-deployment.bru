@@ -1,0 +1,19 @@
+meta {
+  name: AI Core - Get Deployment
+  type: http
+  seq: 27
+}
+
+get {
+  url: {{AI_API_URL}}/v2/lm/deployments/{{AICORE_DEPLOYMENT_ID}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}

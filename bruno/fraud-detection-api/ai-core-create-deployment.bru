@@ -1,0 +1,33 @@
+meta {
+  name: AI Core - Create Deployment
+  type: http
+  seq: 25
+}
+
+post {
+  url: {{AI_API_URL}}/v2/lm/deployments
+  body: json
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "configurationId": "{{AICORE_CONFIGURATION_ID}}"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if ((res.getStatus() === 200 || res.getStatus() === 201) && body && body.id) {
+    bru.setEnvVar("AICORE_DEPLOYMENT_ID", body.id, { persist: true });
+  }
+}

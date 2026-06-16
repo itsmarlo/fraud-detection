@@ -4,6 +4,7 @@ Open this directory as a Bruno collection and select one of these environments:
 
 - `local`: direct Uvicorn server at `http://localhost:8000`
 - `btp`: deployed Cloud Foundry application route
+- `ai-core`: SAP AI Core deployment management/inference calls
 
 Before using either environment, edit these variables in Bruno:
 
@@ -27,3 +28,33 @@ The API currently has no application authentication. Do not store SAP AI Core
 credentials, OpenAI keys, Cloud Foundry passwords, or service keys in Bruno.
 Those are server-side deployment settings and are not required by these API
 requests.
+
+## AI Core Deployment Calls
+
+Select the `ai-core` environment and set:
+
+- `AICORE_BASE_URL`
+- `AICORE_TOKEN_URL`
+- `AICORE_CLIENT_ID`
+- `AICORE_CLIENT_SECRET`
+- `AICORE_RESOURCE_GROUP`
+- `AICORE_SCENARIO_ID`
+- `AICORE_EXECUTABLE_ID`
+- `AICORE_CONFIGURATION_NAME`
+- `AICORE_DEPLOYMENT_ID`
+
+Request order:
+
+1. `AI Core - Get Token`
+2. `AI Core - List Scenarios`
+3. `AI Core - List Executables`
+4. `AI Core - Create Configuration`
+5. `AI Core - Create Deployment`
+6. `AI Core - Get Deployment`
+7. `AI Core - Invoke Fraud Assessment`
+
+`AI Core - Get Token` stores `AICORE_TOKEN` as a non-persistent environment
+variable for the active Bruno session.
+
+`AI Core - Create Configuration` stores `AICORE_CONFIGURATION_ID`, and
+`AI Core - Create Deployment` stores `AICORE_DEPLOYMENT_ID`.

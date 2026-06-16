@@ -1,0 +1,19 @@
+meta {
+  name: AI Core - List Executables
+  type: http
+  seq: 22
+}
+
+get {
+  url: {{AI_API_URL}}/v2/lm/scenarios/{{AICORE_SCENARIO_ID}}/executables
+  body: none
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}

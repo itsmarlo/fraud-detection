@@ -1,0 +1,37 @@
+meta {
+  name: AI Core - Create Configuration
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{AI_API_URL}}/v2/lm/configurations
+  body: json
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "name": "{{AICORE_CONFIGURATION_NAME}}",
+    "scenarioId": "{{AICORE_SCENARIO_ID}}",
+    "executableId": "{{AICORE_EXECUTABLE_ID}}",
+    "parameterBindings": [],
+    "inputArtifactBindings": []
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if ((res.getStatus() === 200 || res.getStatus() === 201) && body && body.id) {
+    bru.setEnvVar("AICORE_CONFIGURATION_ID", body.id, { persist: true });
+  }
+}

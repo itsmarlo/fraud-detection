@@ -1,0 +1,24 @@
+meta {
+  name: AI Core - List Configurations
+  type: http
+  seq: 24
+}
+
+get {
+  url: {{AI_API_URL}}/v2/lm/configurations
+  body: none
+  auth: bearer
+}
+
+params:query {
+  scenarioId: {{AICORE_SCENARIO_ID}}
+  executableIds: {{AICORE_EXECUTABLE_ID}}
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}

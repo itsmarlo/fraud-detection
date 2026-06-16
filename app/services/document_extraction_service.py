@@ -81,10 +81,14 @@ class DocumentExtractionService:
         lowered = text.lower()
         keywords = {
             "REPAIR_INVOICE": ("invoice", "rechnung", "repair total"),
-            "POLICE_REPORT": ("police report", "polizeibericht"),
+            "POLICE_REPORT": (
+                "police report",
+                "polizeibericht",
+                "witness statement",
+                "witness",
+            ),
             "ACCIDENT_REPORT": ("accident report", "unfallbericht"),
             "CLAIM_FORM": ("claim form", "claimant"),
-            "WITNESS_STATEMENT": ("witness statement", "witness"),
         }
         for document_type, terms in keywords.items():
             if any(term in lowered for term in terms):

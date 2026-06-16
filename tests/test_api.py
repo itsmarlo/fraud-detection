@@ -27,6 +27,8 @@ def test_demo_ui_and_static_assets(client):
     assert "data-photo-index" in script.text
     assert "inferredDocumentType" in script.text
     assert "data-document-type-index" in script.text
+    assert "Police report incl. witness statements" in page.text
+    assert "WITNESS_STATEMENT" not in page.text
     assert 'id="ruleScore"' in page.text
     assert 'name="number_of_previous_claims" type="number" value="0"' in page.text
     assert 'name="premium_payment_status" value="CURRENT"' in page.text

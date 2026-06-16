@@ -234,6 +234,26 @@ def test_uploaded_police_report_overrides_stale_claim_flag(client, claim_payload
     assert "MISSING_POLICE_REPORT" not in codes
 
 
+def test_witness_statement_filename_is_treated_as_police_report(client, claim_payload):
+    upload = client.post(
+        f"/api/v1/claims/{claim_payload['claim_id']}/files/upload",
+        data={"document_type": "POLICE_REPORT"},
+        files={"files": ("witness-statement.pdf", pdf_bytes(), "application/pdf")},
+    )
+    assert upload.status_code == 201
+    assert upload.json()[0]["document_type"] == "POLICE_REPORT"
+
+    payload = {**claim_payload, "has_police_report": False}
+    prediction = client.post(
+        f"/api/v1/claims/{claim_payload['claim_id']}/predict-with-files",
+        json=payload,
+    )
+
+    assert prediction.status_code == 200
+    codes = {item["code"] for item in prediction.json()["reasons"]}
+    assert "MISSING_POLICE_REPORT" not in codes
+
+
 def test_missing_expected_documents_reduce_confidence(client, claim_payload):
     incomplete_claim = {**claim_payload, "claim_id": "CLM-INCOMPLETE"}
     complete_claim = {**claim_payload, "claim_id": "CLM-MORE-COMPLETE"}

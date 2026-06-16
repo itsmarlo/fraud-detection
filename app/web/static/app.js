@@ -53,13 +53,20 @@ function documentTypeLabel(type) {
 function inferredDocumentType(filename, fallback) {
   const normalized = filename.toLowerCase().replaceAll(/[_-]+/g, " ");
   const patterns = [
-    ["POLICE_REPORT", ["police report", "police", "polizeibericht", "polizei"]],
+    ["POLICE_REPORT", [
+      "police report",
+      "police",
+      "polizeibericht",
+      "polizei",
+      "witness statement",
+      "witness",
+      "zeuge",
+    ]],
     ["REPAIR_INVOICE", ["repair invoice", "invoice", "rechnung"]],
     ["ACCIDENT_REPORT", ["accident report", "unfallbericht"]],
     ["CLAIM_FORM", ["claim form", "claim"]],
     ["DRIVER_LICENSE", ["driver license", "driving license", "führerschein"]],
     ["VEHICLE_REGISTRATION", ["vehicle registration", "registration", "fahrzeugschein"]],
-    ["WITNESS_STATEMENT", ["witness statement", "witness", "zeuge"]],
   ];
   const match = patterns.find(([, terms]) =>
     terms.some((term) => normalized.includes(term)));
@@ -183,7 +190,7 @@ function claimPayload() {
     has_police_report: documentTypes.has("POLICE_REPORT"),
     has_damage_photos: hasPhotos,
     has_repair_invoice: documentTypes.has("REPAIR_INVOICE"),
-    has_witness_statement: documentTypes.has("WITNESS_STATEMENT"),
+    has_witness_statement: documentTypes.has("POLICE_REPORT"),
     third_party_involved: form.elements.third_party_involved.checked,
     photo_capture_date: hasPhotos ? claim.accident_date : null,
     invoice_date: claim.invoice_date || null,

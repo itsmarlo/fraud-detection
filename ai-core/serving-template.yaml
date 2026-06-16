@@ -9,6 +9,7 @@ metadata:
     executables.ai.sap.com/description: Joule-friendly fraud assessment endpoint
   labels:
     scenarios.ai.sap.com/id: fraud-detection-claims
+    executables.ai.sap.com/id: fraud-assessment-api
     ai.sap.com/version: "1.0.0"
 spec:
   template:
@@ -20,7 +21,7 @@ spec:
     spec: |
       predictor:
         imagePullSecrets:
-          - name: 5b549799-1bcc-4f1c-9dbc-4c4ee31a20bc=
+          - name: docker-registry-secret
         containers:
           - name: fraud-detection-claims-api
             image: docker.io/itsmarlo/fraud-detection-claims-api:v1

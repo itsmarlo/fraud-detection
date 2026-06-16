@@ -81,7 +81,56 @@ Response shape is optimized for Joule:
   "component_scores": {},
   "rule_based_score": 41.0,
   "ml_probability_score": null,
-  "model_version": "fraud-score-v2-calibrated-boosting"
+  "model_version": "fraud-score-v2-calibrated-boosting",
+  "joule_workflow": {
+    "claim_submission": {
+      "policy_number": "ABX5678901",
+      "policyholder": "Max Mustermann",
+      "vehicle": "COMPREHENSIVE vehicle",
+      "date_time_of_incident": "2025-03-23 09:00",
+      "location_of_incident": "Maximilianstrasse, Munich",
+      "incident_type": "Collision with a tree trunk",
+      "extent_of_damage": "Front bumper dented and windshield cracked.",
+      "damage_description": "Front bumper dented and windshield cracked.",
+      "requested_amount": 1084,
+      "currency": "EUR"
+    },
+    "attachment_assessments": [
+      {
+        "label": "Damaged Vehicle",
+        "document_type": "DAMAGE_PHOTO",
+        "fraud_probability": 88,
+        "confidence": 80,
+        "note": "Image quality and vehicle-damage consistency require verification."
+      }
+    ],
+    "overall_fraud_probability": 42.1,
+    "compensability": {
+      "is_compensable": false,
+      "reason": "Notice of loss made more than 10 days after incident occurred.",
+      "can_override": true
+    },
+    "claim_items": [
+      {
+        "item_id": "0001",
+        "description": "Front bumper dented and windshield cracked.",
+        "amount": 1084,
+        "currency": "EUR"
+      }
+    ],
+    "reserve_recommendation": {
+      "current_reserve": 794.57,
+      "recommended_reserve": 2350,
+      "currency": "EUR",
+      "is_current_reserve_sufficient": false,
+      "rationale": []
+    },
+    "suggested_actions": [
+      "Approve adjusted reserve (2350 EUR)",
+      "Request supplemental inspection",
+      "Deny payout only if coverage or evidence validation fails"
+    ]
+  }
 }
 ```
 

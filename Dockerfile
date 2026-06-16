@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+ARG PIP_TRUSTED_HOSTS=""
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=8080
@@ -15,7 +17,11 @@ COPY certs/ /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN if [ -n "$PIP_TRUSTED_HOSTS" ]; then \
+      pip install --no-cache-dir $PIP_TRUSTED_HOSTS -r requirements.txt; \
+    else \
+      pip install --no-cache-dir -r requirements.txt; \
+    fi
 
 COPY . .
 RUN mkdir -p storage/uploads

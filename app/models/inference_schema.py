@@ -30,6 +30,58 @@ class JouleEvidenceUsed(BaseModel):
     analysis_status: str
 
 
+class JouleClaimSubmission(BaseModel):
+    policy_number: str
+    policyholder: str
+    vehicle: str
+    date_time_of_incident: str
+    location_of_incident: str
+    incident_type: str
+    extent_of_damage: str
+    damage_description: str
+    requested_amount: float
+    currency: str = "EUR"
+
+
+class JouleAttachmentAssessment(BaseModel):
+    label: str
+    document_type: str
+    fraud_probability: float
+    confidence: float
+    note: str
+
+
+class JouleCompensability(BaseModel):
+    is_compensable: bool
+    reason: str
+    can_override: bool
+
+
+class JouleClaimItem(BaseModel):
+    item_id: str
+    description: str
+    amount: float
+    currency: str = "EUR"
+
+
+class JouleReserveRecommendation(BaseModel):
+    current_reserve: float
+    recommended_reserve: float
+    currency: str = "EUR"
+    is_current_reserve_sufficient: bool
+    rationale: list[str]
+
+
+class JouleWorkflow(BaseModel):
+    claim_submission: JouleClaimSubmission
+    attachment_assessments: list[JouleAttachmentAssessment]
+    overall_fraud_probability: float
+    compensability: JouleCompensability
+    claim_items: list[JouleClaimItem]
+    reserve_recommendation: JouleReserveRecommendation
+    suggested_actions: list[str]
+
+
 class FraudAssessmentResponse(BaseModel):
     claim_id: str
     fraud_score: float
@@ -44,3 +96,4 @@ class FraudAssessmentResponse(BaseModel):
     rule_based_score: float
     ml_probability_score: float | None = None
     model_version: str
+    joule_workflow: JouleWorkflow

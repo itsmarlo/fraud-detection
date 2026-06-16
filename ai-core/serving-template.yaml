@@ -20,10 +20,10 @@ spec:
     spec: |
       predictor:
         imagePullSecrets:
-          - name: <image-pull-secret>
+          - name: 5b549799-1bcc-4f1c-9dbc-4c4ee31a20bc=
         containers:
           - name: fraud-detection-claims-api
-            image: <registry>/fraud-detection-claims-api:<tag>
+            image: docker.io/itsmarlo/fraud-detection-claims-api:v1
             ports:
               - containerPort: 8080
                 protocol: TCP

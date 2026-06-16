@@ -11,6 +11,7 @@ from app.api import (
     routes_documents,
     routes_files,
     routes_health,
+    routes_inference,
     routes_model,
 )
 from app.core.config import get_settings
@@ -57,3 +58,4 @@ app.include_router(routes_claims.router)
 app.include_router(routes_files.router)
 app.include_router(routes_documents.router)
 app.include_router(routes_model.router)
+app.include_router(routes_inference.router)

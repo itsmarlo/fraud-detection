@@ -10,7 +10,7 @@ metadata:
   labels:
     scenarios.ai.sap.com/id: "fraud-detection-claims"
     executables.ai.sap.com/id: "fraud-assessment-api"
-    ai.sap.com/version: "1.0.7"
+    ai.sap.com/version: "1.0.8"
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"
@@ -31,3 +31,4 @@ spec:
             image: docker.io/itsmarlo/fraud-detection-claims-api:v1
             ports:
               - containerPort: 8080
+                protocol: TCP

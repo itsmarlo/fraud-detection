@@ -15,6 +15,14 @@ metadata:
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"
+
+    metadata:
+      annotations: |
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "2"
+      labels: |
+        ai.sap.com/resourcePlan: infer.s
+
     spec: |
       predictor:
         containers:

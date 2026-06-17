@@ -23,7 +23,7 @@ spec:
         imagePullSecrets:
           - name: fraud-detection
         containers:
-          - name: fraud-detection-claims-api
+          - name: kserve-container
             image: docker.io/itsmarlo/fraud-detection-claims-api:v1
             ports:
               - containerPort: 8080

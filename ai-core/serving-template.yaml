@@ -12,20 +12,16 @@ metadata:
     executables.ai.sap.com/id: "fraud-assessment-api"
     ai.sap.com/version: "1.0.0"
 spec:
-  inputs:
-    parameters:
-      - name: dummy
-        type: string
-        default: "dummy"
-        description: "Required dummy parameter for SAP AI Core serving template configuration"
-
   template:
     apiVersion: "serving.kserve.io/v1beta1"
+    kind: InferenceService
 
     metadata:
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
+      labels: |
+        ai.sap.com/resourcePlan: "infer.s"
 
     spec: |
       predictor:

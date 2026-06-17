@@ -13,22 +13,16 @@ metadata:
     ai.sap.com/version: "1.0.0"
 
 spec:
-  inputs:
-    parameters:
-      - name: resourcePlan
-        type: string
-        default: "infer.s"
-        description: "SAP AI Core resource plan"
-
   template:
     apiVersion: "serving.kserve.io/v1beta1"
+    kind: InferenceService
 
     metadata:
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
       labels: |
-        ai.sap.com/resourcePlan: "{{inputs.parameters.resourcePlan}}"
+        ai.sap.com/resourcePlan: "infer.s"
 
     spec: |
       predictor:

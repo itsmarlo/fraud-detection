@@ -10,7 +10,7 @@ metadata:
   labels:
     scenarios.ai.sap.com/id: "fraud-detection-claims"
     executables.ai.sap.com/id: "fraud-assessment-api"
-    ai.sap.com/version: "1.0.6"
+    ai.sap.com/version: "1.0.7"
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"
@@ -24,8 +24,6 @@ spec:
         ai.sap.com/resourcePlan: infer.s
     spec: |
       predictor:
-        imagePullSecrets:
-          - name: fraud-detection
         minReplicas: 1
         maxReplicas: 1
         containers:
@@ -33,4 +31,3 @@ spec:
             image: docker.io/itsmarlo/fraud-detection-claims-api:v1
             ports:
               - containerPort: 8080
-                protocol: TCP

@@ -14,7 +14,9 @@ metadata:
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"
+    kind: InferenceService
     metadata:
+      name: fraud-assessment-api
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "1"

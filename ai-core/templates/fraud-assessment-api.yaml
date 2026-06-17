@@ -14,14 +14,13 @@ metadata:
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"
-    kind: InferenceService
     metadata:
-      annotations:
+      annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "1"
-      labels:
+      labels: |
         ai.sap.com/resourcePlan: infer.s
-    spec:
+    spec: |
       predictor:
         imagePullSecrets:
           - name: fraud-detection

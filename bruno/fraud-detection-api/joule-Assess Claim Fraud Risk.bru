@@ -1,0 +1,20 @@
+meta {
+  name: joule-Assess Claim Fraud Risk
+  type: http
+  seq: 20
+}
+
+post {
+  url: https://fraud-detection-claims-api-grouchy-wolverine-ja.cfapps.eu10-004.hana.ondemand.com/api/v1/inference/fraud-assessment
+  body: none
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

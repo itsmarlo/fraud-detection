@@ -21,7 +21,7 @@ spec:
     spec: |
       predictor:
         imagePullSecrets:
-          - name: docker-registry-secret
+          - name: fraud-detection
         containers:
           - name: fraud-detection-claims-api
             image: docker.io/itsmarlo/fraud-detection-claims-api:v1

@@ -135,6 +135,19 @@ docker compose up
 Do not work around this error with pip's `--trusted-host`; install the trusted
 CA instead so HTTPS certificate verification remains enabled.
 
+If the corporate CA cannot be exported immediately and a development image is
+needed, use the temporary build escape hatch:
+
+```bash
+docker build --no-cache --platform linux/amd64 \
+  --build-arg 'PIP_TRUSTED_HOSTS=--trusted-host pypi.org --trusted-host files.pythonhosted.org' \
+  -t docker.io/itsmarlo/fraud-detection-claims-api:v1 .
+```
+
+Use this only as a short-term unblocker. For shared or production images, add
+the Zscaler or corporate root CA as `certs/company-root-ca.crt` and build
+without `PIP_TRUSTED_HOSTS`.
+
 The compose volume persists local development uploads. Do not use local container or Cloud Foundry disk as production evidence storage.
 
 ## API Flow

@@ -8,4 +8,5 @@ certs/company-root-ca.crt
 ```
 
 Docker installs certificates from this directory before `pip` downloads Python
-dependencies. Certificate files are ignored by Git.
+dependencies. The Dockerfile points `pip`, Python SSL, and Requests at the
+updated Debian certificate bundle. Certificate files are ignored by Git.

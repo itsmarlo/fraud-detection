@@ -139,11 +139,37 @@ Response shape is optimized for Joule:
 Build and push the Docker image to a registry accessible by SAP AI Core:
 
 ```bash
-docker build -t <registry>/fraud-detection-claims-api:<tag> .
-docker push <registry>/fraud-detection-claims-api:<tag>
+docker build --platform linux/amd64 -t docker.io/itsmarlo/fraud-detection-claims-api:v1 .
+docker push docker.io/itsmarlo/fraud-detection-claims-api:v1
 ```
 
-Then update `serving-template.yaml` image placeholders.
+The `--platform linux/amd64` flag is recommended when building from Apple
+Silicon so the image runs on SAP AI Core's amd64 runtime.
+
+## Docker Registry Secret
+
+Add the Docker registry credentials once in SAP AI Launchpad before creating or
+syncing the deployment. SAP AI Core uses this secret to pull the private image.
+
+Use these values in SAP AI Launchpad:
+
+```text
+Name: fraud-detection
+URL: https://index.docker.io
+Username: itsmarlo
+Access Token: <Docker Hub access token with pull access>
+```
+
+The serving templates already reference this registry secret and image:
+
+```yaml
+imagePullSecrets:
+  - name: fraud-detection
+image: docker.io/itsmarlo/fraud-detection-claims-api:v1
+```
+
+If you publish a new image tag, update both `ai.sap.com/version` and the image
+tag in `serving-template.yaml`, then let AI Core sync the GitHub repository.
 
 ## AI Core Configuration
 

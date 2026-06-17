@@ -265,7 +265,7 @@ function renderResult(result, analyses) {
   document.querySelector("#networkScore").textContent = result.network_score.toFixed(0);
   document.querySelector("#ruleScore").textContent = result.rule_based_score.toFixed(1);
   document.querySelector("#mlScore").textContent = result.ml_probability_score == null
-    ? "Not available"
+    ? "Optional"
     : result.ml_probability_score.toFixed(1);
 
   const reasons = result.reasons || [];

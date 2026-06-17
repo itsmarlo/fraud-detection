@@ -12,13 +12,14 @@ metadata:
     executables.ai.sap.com/id: fraud-assessment-api
     ai.sap.com/version: "1.0.0"
 spec:
-  template:
+  template: |
     apiVersion: serving.kserve.io/v1beta1
+    kind: InferenceService
     metadata:
-      annotations: |
+      annotations:
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
-    spec: |
+    spec:
       predictor:
         imagePullSecrets:
           - name: fraud-detection
@@ -28,3 +29,53 @@ spec:
             ports:
               - containerPort: 8080
                 protocol: TCP
+            env:
+              - name: PORT
+                value: "8080"
+              - name: APP_ENV
+                value: "ai-core"
+              - name: ENABLE_LLM_ENCODER
+                value: "true"
+              - name: LLM_PROVIDER
+                value: "btp"
+              - name: AICORE_RESOURCE_GROUP
+                value: "grounding-test"
+              - name: AICORE_LLM_MODEL
+                value: "claude-sonnet-4"
+              - name: MASKING_REQUIRED
+                value: "true"
+              - name: STORAGE_BACKEND
+                value: "local"
+              - name: AICORE_BASE_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: fraud-aicore-secrets
+                    key: AICORE_BASE_URL
+              - name: AICORE_TOKEN_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: fraud-aicore-secrets
+                    key: AICORE_TOKEN_URL
+              - name: AICORE_CLIENT_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: fraud-aicore-secrets
+                    key: AICORE_CLIENT_ID
+              - name: AICORE_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: fraud-aicore-secrets
+                    key: AICORE_CLIENT_SECRET
+              - name: ORCH_DEPLOYMENT_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: fraud-aicore-secrets
+                    key: ORCH_DEPLOYMENT_URL
+            readinessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+            livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080

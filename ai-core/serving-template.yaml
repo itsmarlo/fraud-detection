@@ -12,13 +12,14 @@ metadata:
     executables.ai.sap.com/id: fraud-assessment-api
     ai.sap.com/version: "1.0.0"
 spec:
-  template:
+  template: |
     apiVersion: serving.kserve.io/v1beta1
+    kind: InferenceService
     metadata:
-      annotations: |
+      annotations:
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
-    spec: |
+    spec:
       predictor:
         imagePullSecrets:
           - name: fraud-detection

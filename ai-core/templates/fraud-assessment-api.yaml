@@ -3,21 +3,33 @@ kind: ServingTemplate
 metadata:
   name: fraud-assessment-api
   annotations:
-    scenarios.ai.sap.com/name: fraud-detection-claims
-    scenarios.ai.sap.com/description: Motor insurance fraud assessment API
-    executables.ai.sap.com/name: fraud-assessment-api
-    executables.ai.sap.com/description: Joule-friendly fraud assessment endpoint
+    scenarios.ai.sap.com/name: "fraud-detection-claims"
+    scenarios.ai.sap.com/description: "Motor insurance fraud assessment API"
+    executables.ai.sap.com/name: "fraud-assessment-api"
+    executables.ai.sap.com/description: "Joule-friendly fraud assessment endpoint"
   labels:
-    scenarios.ai.sap.com/id: fraud-detection-claims
-    executables.ai.sap.com/id: fraud-assessment-api
+    scenarios.ai.sap.com/id: "fraud-detection-claims"
+    executables.ai.sap.com/id: "fraud-assessment-api"
     ai.sap.com/version: "1.0.0"
+
 spec:
+  inputs:
+    parameters:
+      - name: resourcePlan
+        type: string
+        default: "infer.s"
+        description: "SAP AI Core resource plan"
+
   template:
-    apiVersion: serving.kserve.io/v1beta1
+    apiVersion: "serving.kserve.io/v1beta1"
+
     metadata:
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
+      labels: |
+        ai.sap.com/resourcePlan: "{{inputs.parameters.resourcePlan}}"
+
     spec: |
       predictor:
         imagePullSecrets:
@@ -45,6 +57,7 @@ spec:
                 value: "true"
               - name: STORAGE_BACKEND
                 value: "local"
+
               - name: AICORE_BASE_URL
                 valueFrom:
                   secretKeyRef:
@@ -70,6 +83,7 @@ spec:
                   secretKeyRef:
                     name: fraud-aicore-secrets
                     key: ORCH_DEPLOYMENT_URL
+
             readinessProbe:
               httpGet:
                 path: /health

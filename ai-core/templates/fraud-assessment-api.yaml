@@ -10,18 +10,22 @@ metadata:
   labels:
     scenarios.ai.sap.com/id: "fraud-detection-claims"
     executables.ai.sap.com/id: "fraud-assessment-api"
-    ai.sap.com/version: "1.0.1"
+    ai.sap.com/version: "1.0.2"
 
 spec:
+  inputs:
+    parameters:
+      - name: resourcePlan
+        type: "string"
+        default: "infer.s"
+        description: "SAP AI Core resource plan"
+
   template:
     apiVersion: "serving.kserve.io/v1beta1"
 
     metadata:
-      annotations: |
-        autoscaling.knative.dev/minScale: "1"
-        autoscaling.knative.dev/maxScale: "2"
       labels: |
-        ai.sap.com/resourcePlan: infer.s
+        ai.sap.com/resourcePlan: "{{inputs.parameters.resourcePlan}}"
 
     spec: |
       predictor:

@@ -20,8 +20,6 @@ spec:
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
-      labels: |
-        ai.sap.com/resourcePlan: infer.s
     spec: |
       predictor:
         containers:

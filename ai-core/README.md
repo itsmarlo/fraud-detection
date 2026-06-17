@@ -160,7 +160,7 @@ Username: itsmarlo
 Access Token: <Docker Hub access token with pull access>
 ```
 
-The serving templates already reference this registry secret and image:
+The serving template already references this registry secret and image:
 
 ```yaml
 imagePullSecrets:
@@ -169,7 +169,8 @@ image: docker.io/itsmarlo/fraud-detection-claims-api:v1
 ```
 
 If you publish a new image tag, update both `ai.sap.com/version` and the image
-tag in `serving-template.yaml`, then let AI Core sync the GitHub repository.
+tag in `ai-core/templates/fraud-assessment-api.yaml`, then let AI Core sync the
+GitHub repository.
 
 ## AI Core Configuration
 
@@ -177,7 +178,7 @@ Create a scenario/executable/configuration/deployment in SAP AI Core or AI
 Launchpad using:
 
 ```text
-ai-core/serving-template.yaml
+ai-core/templates/fraud-assessment-api.yaml
 ```
 
 Required environment variables:

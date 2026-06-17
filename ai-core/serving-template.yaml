@@ -11,17 +11,24 @@ metadata:
     scenarios.ai.sap.com/id: "fraud-detection-claims"
     executables.ai.sap.com/id: "fraud-assessment-api"
     ai.sap.com/version: "1.0.0"
+
 spec:
+  inputs:
+    parameters:
+      - name: resourcePlan
+        type: string
+        default: "infer.s"
+        description: "SAP AI Core serving resource plan"
+
   template:
     apiVersion: "serving.kserve.io/v1beta1"
-    kind: InferenceService
 
     metadata:
       annotations: |
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "2"
       labels: |
-        ai.sap.com/resourcePlan: "infer.s"
+        ai.sap.com/resourcePlan: "{{inputs.parameters.resourcePlan}}"
 
     spec: |
       predictor:
@@ -50,7 +57,6 @@ spec:
                 value: "true"
               - name: STORAGE_BACKEND
                 value: "local"
-
               - name: AICORE_BASE_URL
                 valueFrom:
                   secretKeyRef:

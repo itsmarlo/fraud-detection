@@ -10,7 +10,7 @@ metadata:
   labels:
     scenarios.ai.sap.com/id: "fraud-detection-claims"
     executables.ai.sap.com/id: "fraud-assessment-api"
-    ai.sap.com/version: "1.0.5"
+    ai.sap.com/version: "1.0.6"
 spec:
   template:
     apiVersion: "serving.kserve.io/v1beta1"

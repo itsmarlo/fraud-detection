@@ -1,0 +1,93 @@
+meta {
+  name: AI Core - Invoke Fraud Assessment Images
+  type: http
+  seq: 29
+}
+
+post {
+  url: {{AI_API_URL}}/v2/inference/deployments/{{AICORE_DEPLOYMENT_ID}}/api/v1/inference/fraud-assessment
+  body: json
+  auth: bearer
+}
+
+headers {
+  AI-Resource-Group: {{AICORE_RESOURCE_GROUP}}
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "claim": {
+      "claim_id": "5808",
+      "policy_id": "ABX5678901",
+      "policyholder_id": "Max Mustermann",
+      "claim_amount": 1084,
+      "vehicle_value": 25000,
+      "repair_estimate_amount": 1084,
+      "accident_date": "2025-03-23",
+      "claim_report_date": "2025-04-10",
+      "policy_start_date": "2024-01-01",
+      "policy_end_date": "2026-01-01",
+      "coverage_type": "COMPREHENSIVE",
+      "driver_age": 42,
+      "vehicle_age_years": 2,
+      "vehicle_mileage": 30000,
+      "number_of_previous_claims": 0,
+      "number_of_previous_rejected_claims": 0,
+      "premium_payment_status": "CURRENT",
+      "recent_policy_change": false,
+      "accident_location": "Maximilianstrasse, Munich",
+      "accident_time_hour": 9,
+      "damage_description": "Collision with a tree trunk. Front bumper dented and windshield cracked.",
+      "garage_id": "ABC-Service-Center",
+      "garage_previous_suspicious_claims": 0,
+      "has_police_report": true,
+      "has_damage_photos": true,
+      "has_repair_invoice": true,
+      "has_witness_statement": true,
+      "invoice_date": "2025-03-24",
+      "photo_capture_date": "2025-03-23",
+      "bank_account_hash": null,
+      "phone_hash": null,
+      "email_hash": null,
+      "third_party_involved": false
+    },
+    "evidence": [
+      {
+        "filename": "damage-front.png",
+        "content_type": "image/png",
+        "document_type": "DAMAGE_PHOTO",
+        "content_base64": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEklEQVR4nGPcJ6fLwMDAxAAGAA0nAQ24adQUAAAAAElFTkSuQmCC"
+      },
+      {
+        "filename": "damage-side.png",
+        "content_type": "image/png",
+        "document_type": "DAMAGE_PHOTO",
+        "content_base64": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEklEQVR4nGPUiNrCwMDAxAAGAA4mATqk2H3iAAAAAElFTkSuQmCC"
+      },
+      {
+        "filename": "police-report.txt",
+        "content_type": "text/plain",
+        "document_type": "POLICE_REPORT",
+        "content_base64": "UG9saWNlIHJlcG9ydC4gTG9jYXRpb246IE1heGltaWxpYW5zdHJhc3NlLCBNdW5pY2gu"
+      },
+      {
+        "filename": "repair-invoice.txt",
+        "content_type": "text/plain",
+        "document_type": "REPAIR_INVOICE",
+        "content_base64": "UmVwYWlyIGludm9pY2UuIEFtb3VudDogMTA4NCBFVVIuIEZyb250IGJ1bXBlciBhbmQgd2luZHNoaWVsZCByZXBhaXIu"
+      },
+      {
+        "filename": "witness-statement.txt",
+        "content_type": "text/plain",
+        "document_type": "WITNESS_STATEMENT",
+        "content_base64": "V2l0bmVzcyBzdGF0ZW1lbnQuIERyaXZlciByZXBvcnRlZCBjb2xsaXNpb24gd2l0aCBhIHRyZWUgdHJ1bmsgYXQgMDk6MDAu"
+      }
+    ],
+    "replace_existing_evidence": true
+  }
+}

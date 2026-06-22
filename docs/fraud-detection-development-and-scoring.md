@@ -20,6 +20,23 @@ The solution combines three intelligence layers:
 2. Optional tabular ML scoring using calibrated gradient boosting
 3. Optional multimodal evidence analysis through an LLM provider such as SAP AI Core / BTP
 
+### Important Runtime Logic
+
+For presentation purposes, the business logic can be described as:
+
+```text
+Rule-based baseline -> gradient boosting ML support -> multimodal LLM evidence enrichment
+```
+
+The implementation is slightly more precise:
+
+- The rule engine is the mandatory baseline and always produces explainable reason codes.
+- The gradient boosting model is optional. When available, it supports the rule result through weighted score fusion. It does not replace the rules.
+- The multimodal LLM is optional. It analyzes documents and images from SAP AI Core / BTP and enriches the document/image evidence scores. It does not make the final fraud decision alone.
+- The final fraud decision is produced by score fusion, with rules remaining the explainable foundation.
+
+In other words, ML supports the rule-based assessment, while the multimodal LLM supports evidence understanding.
+
 ## 2. High-Level Architecture
 
 ```mermaid
@@ -34,16 +51,18 @@ flowchart LR
     G --> I["Image Risk Rules"]
     C --> J["Structured Claim Rules"]
     E --> K["Network Reuse Checks"]
-    C --> L["Optional Tabular ML Model"]
+    J --> L["Optional Tabular ML Support"]
     F --> M["Optional Multimodal LLM Encoder"]
     G --> M
-    J --> N["Score Fusion"]
+    J --> N["Rule-Based Score"]
     H --> N
     I --> N
     K --> N
-    L --> N
-    M --> N
-    N --> O["Fraud Score + Reasons + Joule Workflow"]
+    M --> H
+    M --> I
+    N --> P["Score Fusion"]
+    L --> P
+    P --> O["Fraud Score + Reasons + Joule Workflow"]
 ```
 
 ### Main Runtime Components
@@ -517,16 +536,20 @@ sequenceDiagram
     participant AICore as SAP AI Core Endpoint
     participant API as FastAPI App
     participant Rules as Rule Engine
+    participant LLM as BTP Multimodal LLM
     participant ML as Optional ML Model
     participant Resp as Response Builder
 
     Joule->>AICore: POST claim + evidence[]
     AICore->>API: Forward inference request
     API->>API: Decode and validate evidence
+    API->>LLM: Analyze documents/images if enabled
+    LLM-->>API: Evidence risk, inconsistencies, image comparison
     API->>Rules: Score structured claim and evidence
     API->>ML: Predict fraud probability if model exists
     Rules-->>Resp: Rule score + reasons
     ML-->>Resp: ML probability or null
+    API->>Resp: Fuse rule score + ML support
     Resp-->>AICore: FraudAssessmentResponse
     AICore-->>Joule: Risk score, reasons, recommended action
 ```
